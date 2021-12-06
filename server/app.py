@@ -2,7 +2,6 @@ from flask import Flask, request, Response, session
 from flask import json
 from flask.json import jsonify
 from flask_bcrypt import Bcrypt
-from flask_session import Session
 from flask_cors import CORS
 import sqlite3
 
