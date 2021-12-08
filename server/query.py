@@ -24,5 +24,19 @@ class DBConnect:
         self.con.commit()
         return res
 
+    def add_offer(self, user_id, truck_id, leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_phone, carrier_email, carrier_notes):
+        query = 'INSERT INTO Offer (carrier_id , truck_id, status, leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_phone, carrier_email, carrier_notes) VALUES ("{}", "{}", "{}")'.format(
+            user_id, truck_id, "available", leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_phone, carrier_email, carrier_notes)
+        res = self.cursor.execute(query)
+        self.con.commit()
+        return res
+
+    def update_status_offer(self, status, offer_id):
+        query = "UPDATE Offer SET status=(status) WHERE offer_id=(id)".format(
+            status, offer_id)
+        res = self.cursor.execute(query)
+        self.con.commit()
+        return res
+
     def __del__(self):
         self.con.close()

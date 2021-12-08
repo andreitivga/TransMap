@@ -71,5 +71,30 @@ def register():
         return jsonify({'error': 'Username already exists or bad email type.'}), 409
 
 
+@app.route('/offer', methods=['POST'])
+def add_offer():
+    carrier_id = request.json['carrier_id']
+    truck_id = request.json['truck_id']
+    leaving_date = request.json['leaving_date']
+    leaving_place = request.json['leaving_place']
+    arriving_time = request.json['arriving_time']
+    arriving_place = request.json['arriving_place']
+    price_km_empty = request.json['price_km_empty']
+    price_km_full = request.json['price_km_full']
+    carrier_phone = request.json['carrier_phone']
+    carrier_email = request.json['carrier_email']
+    carrier_notes = request.json['carrier_notes']
+    db_conn.add_offer(carrier_id, truck_id, leaving_date, leaving_place, arriving_time,
+                      arriving_place, price_km_empty, price_km_full, carrier_phone, carrier_email, carrier_notes)
+    return Response(status=200)
+
+
+@app.route('/offer', methods=['PUT'])
+def update_status_offer():
+    status = request.json['status']
+    offer_id = request.json['offer_id']
+    db_conn.update_status_offer(status, offer_id)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
