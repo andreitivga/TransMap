@@ -11,15 +11,17 @@
 
                 </div>
             </li>
-            <li><a href="#" class="nav-link d-flex border-bottom cursor-pointer">
+            <li><a [routerLink]="['/home']" class="nav-link py-3 d-flex border-bottom cursor-pointer">
                     <div class="d-flex justify-content-around">
                         <mat-icon>home</mat-icon>
                         <h3 class="px-4">Home</h3>
                     </div>
-                </a> </li>
+                </a>
+            </li>
             <li>
-                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
-                    <mat-icon> add_location</mat-icon>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" data-bs-toggle="modal"
+                    data-bs-target="#postModal" (click)="this.preparePostModal()">
+                    <mat-icon>add_location</mat-icon>
                     <h3 class="px-4">{{ this.curentUserType=="carrier" ? "Post Offer": "Post request"}}</h3>
                 </div>
             </li>
@@ -42,11 +44,90 @@
                 </div>
             </li>
             <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                    <mat-icon>local_shipping</mat-icon>
+                    <h3 class="px-4">Add Track</h3>
+                </div>
+            </li>
+            <li>
                 <div class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.auth.logout()">
                     <mat-icon>exit_to_app</mat-icon>
                     <h3 class="px-4">Logout</h3>
                 </div>
             </li>
         </ul>
+    </div>
+</div>
+
+<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLongTitle">Configure Your Offer</h2>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="px-4">
+                    <div class="row mb-3 px-4">
+                        <select name="truck_sel" class="form-select" id="truck_sel" [(ngModel)]="this.truck_id">
+                            <option selected value="">Select Truck</option>
+                            <option [value]="truck" *ngFor="let truck of this.trucks">{{ truck }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="leaving_place" [(ngModel)]="this.leaving_place"
+                            placeholder="Leaving place">
+                    </div>
+                    <div class="input-group mb-3 px-2">
+                        <button class="btn btn-secondary" type="button">
+                            Leaving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="leaving_date" id="leaving_date"
+                            [(ngModel)]="this.leaving_date" ngbDatepicker #l="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="l.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="leaving_place" [(ngModel)]="this.arriving_place"
+                            placeholder="Arriving place">
+                    </div>
+                    <div class="input-group mb-3 px-2">
+                        <button class="btn btn-secondary" type="button">
+                            Arriving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="arriving_date" id="arriving_date"
+                            [(ngModel)]="this.arriving_date" ngbDatepicker #d="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="price_empty" [(ngModel)]="this.price_km_empty"
+                            placeholder="Price/km Empty">
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="price_empty" [(ngModel)]="this.price_km_full"
+                            placeholder="Price/km Full">
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <textarea class="form-control" placeholder="Notes" name="notes"
+                            [(ngModel)]="this.notes"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-success" (click)="addOfferModal()">Save changes</button> -->
+            </div>
+        </div>
     </div>
 </div>
