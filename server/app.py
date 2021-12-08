@@ -76,19 +76,17 @@ def register():
 
 @app.route('/offer', methods=['POST'])
 def add_offer():
-    carrier_id = request.json['carrier_id']
-    truck_id = request.json['truck_id']
+    carrier_id = int(request.json['carrier_id'])
+    truck_id = int(request.json['truck_id'])
     leaving_date = request.json['leaving_date']
     leaving_place = request.json['leaving_place']
     arriving_time = request.json['arriving_time']
     arriving_place = request.json['arriving_place']
-    price_km_empty = request.json['price_km_empty']
-    price_km_full = request.json['price_km_full']
-    carrier_phone = request.json['carrier_phone']
-    carrier_email = request.json['carrier_email']
-    carrier_notes = request.json['carrier_notes']
+    price_km_empty = float(request.json['price_km_empty'])
+    price_km_full = float(request.json['price_km_full'])
+    carrier_notes = request.json['notes']
     db_conn.add_offer(carrier_id, truck_id, leaving_date, leaving_place, arriving_time,
-                      arriving_place, price_km_empty, price_km_full, carrier_phone, carrier_email, carrier_notes)
+                      arriving_place, price_km_empty, price_km_full, carrier_notes)
     return Response(status=200)
 
 
