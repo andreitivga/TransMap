@@ -1,0 +1,12 @@
+<h1>HI, {{ this.currentUserName}}</h1>
+<div>
+    <div class="d-flex flex-column flex-shrink-0 bg-light vh-100" style="width: 100px;">
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+            <li class="nav-item"> <a href="#" class="nav-link active py-3 border-bottom"> <i class="fa fa-home"></i> <small>Home</small> </a> </li>
+            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-dashboard"></i> <small>Dashboard</small> </a> </li>
+            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-first-order"></i> <small>My Orders</small> </a> </li>
+            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-cog"></i> <small>Settings</small> </a> </li>
+            <li> <button class="nav-link py-3 border-bottom" (click)="this.auth.logout()"> <i class="fa fa-bookmark"></i> <small>Logout</small> </button> </li>
+        </ul>
+    </div>
+</div>
