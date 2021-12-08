@@ -1,0 +1,100 @@
+<div class="container-fluid ps-md-0">
+    <div class="row g-0">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+                            <h1 class="login-heading mb-4">Welcome back!</h1>
+                            <form (keydown.enter)="this.login(this.email, this.password)">
+                                <div class="form-floating mb-3">
+                                    <input name="email" type="email" class="form-control" [(ngModel)]="email" id="user"
+                                        placeholder="name@example.com">
+                                    <label for="user">Email address</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input name="password" type="password" [(ngModel)]="password" id="password"
+                                        class="form-control input-style" placeholder="password" required>
+                                    <label for="password">Password</label>
+                                </div>
+                                <div class="fform-floating mb-3">
+                                    <p class="error-style mt-2"
+                                        *ngIf="emptyCredentials && (this.email == '' || this.password == '')">
+                                        email and Password Required</p>
+                                    <p class="error-style mt-2" *ngIf="wrongCredentials">Wrong Credentials</p>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-lg btn-info btn-login text-uppercase fw-bold mb-2"
+                                        type="submit" (click)="this.login(this.email, this.password)">Sign in</button>
+                                    <button mat-raised-button class="btn btn-lg btn-info btn-login " type="button"
+                                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                        aria-controls="offcanvasRight">Register
+                                        NOW</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="container-fluid ps-md-0">
+        <div class="login d-flex align-items-center py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9 col-lg-8 mx-auto">
+                        <h1 class="login-heading mb-4">Registration Form</h1>
+                        <form
+                            (keydown.enter)="this.register(this.email_reg, this.password_reg, this.first_name, this.last_name, this.role)">
+                            <div class="form-floating mb-3">
+                                <input name="email_reg" type="email" class="form-control" [(ngModel)]="email_reg"
+                                    id="email_reg" placeholder="name@example.com">
+                                <label for="email_reg">Email address</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <select name="role" class="form-select" id="role" aria-label="Default select example" [(ngModel)]="role">
+                                    <option selected value="">Select</option>
+                                    <option value="carrier">Carrier</option>
+                                    <option value="client">Client</option>
+                                  </select>
+                                  <label for="role">User Role</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input name="first_name" type="text" [(ngModel)]="first_name" id="first_name"
+                                    class="form-control input-style" placeholder="first_name" required>
+                                <label for="first_name">First Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input name="last_name" type="text" [(ngModel)]="last_name" id="last_name"
+                                    class="form-control input-style" placeholder="last_name" required>
+                                <label for="last_name">Last Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input name="password_reg" type="password" [(ngModel)]="password_reg" id="password_reg"
+                                    class="form-control input-style" placeholder="password" required>
+                                <label for="password_reg">Password</label>
+                            </div>
+                            <div class="fform-floating mb-3">
+                                <p class="error-style mt-2" *ngIf="emptyCredentials_reg">All fields Required</p>
+                                <p class="error-style mt-2" color="red" *ngIf="invalidCredentials">Invalid Account</p>
+                            </div>
+                            <div class="d-grid">
+                                <button mat-raised-button 
+                                    class="btn btn-lg btn-login btn-info text-uppercase fw-bold mb-2" type="submit"
+                                    (click)="this.register(this.email_reg, this.password_reg, this.first_name, this.last_name, this.role)">Register!</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

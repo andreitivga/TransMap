@@ -17,9 +17,9 @@ class DBConnect:
         res = self.cursor.execute(query1).fetchone()
         return res
 
-    def add_user(self, email, hashed_password, user_type):
-        query = 'INSERT INTO Users (email, password, user_type) VALUES ("{}", "{}", "{}")'.format(
-            email, hashed_password, user_type)
+    def add_user(self, email, hashed_password, user_type, first_name, last_name):
+        query = 'INSERT INTO Users (email, password, user_type, first_name, last_name) VALUES ("{}", "{}", "{}", "{}", "{}")'.format(
+            email, hashed_password, user_type, first_name, last_name)
         res = self.cursor.execute(query)
         self.con.commit()
         return res
