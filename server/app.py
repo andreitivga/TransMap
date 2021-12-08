@@ -46,7 +46,7 @@ def login():
         return jsonify({"error": "Bad password"}), 400
     session['user_id'] = res[0]
     session['user_type'] = res[3]
-    return Response(status=200)
+    return jsonify({'user': {'id': res[0], 'user_type': res[3], 'first_name': res[4]}}), 200
 
 
 @app.route('/logout', methods=['POST'])
@@ -60,13 +60,16 @@ def register():
     email = request.json['email']
     password = request.json['password']
     user_type = request.json['user_type']
+    first_name= request.json['first_name']
+    last_name= request.json['last_name']
     user_types = ['client', 'carrier', 'admin']
     if user_type not in user_types:
         return jsonify({'error': 'Bad user type'}), 401
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     try:
-        db_conn.add_user(email, hashed_password, user_type)
-        return Response(status=200)
+        db_conn.add_user(email, hashed_password, user_type, first_name, last_name)
+        res=db_conn.get_user_info_by_email(email)
+        return jsonify({'user': {'id': res[0], 'user_type': res[3], 'first_name': res[4]}}), 200
     except:
         return jsonify({'error': 'Username already exists or bad email type.'}), 409
 
