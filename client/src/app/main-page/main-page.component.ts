@@ -19,6 +19,8 @@ export class MainPageComponent implements OnInit {
   public status: string = "";
   public leaving_date!: NgbDateStruct | null;
   public arriving_date!: NgbDateStruct | null;
+  public max_leaving_date!: NgbDateStruct | null;
+  public max_arriving_date!: NgbDateStruct | null;
   public leaving_place: string = "";
   public arriving_place: string = "";
   public price_km_empty: string = "";
@@ -27,6 +29,10 @@ export class MainPageComponent implements OnInit {
   public truck_model: string = "";
   public truck_volume: string = "";
   public truck_weight: string = "";
+  public goods_type: string = "";
+  public goods_weight: string = "";
+  public goods_volume: string = "";
+  public budget: string = "";
 
   constructor(public auth: BackendApiService, private parserFormatter: NgbDateParserFormatter) { }
 
@@ -56,6 +62,10 @@ export class MainPageComponent implements OnInit {
     this.price_km_empty = "";
     this.price_km_full = "";
     this.notes = "";
+    this.goods_type = "";
+    this.goods_weight = "";
+    this.goods_volume = "";
+    this.budget = "";
     this.getTrucks();
   }
 
@@ -63,16 +73,28 @@ export class MainPageComponent implements OnInit {
     if (this.curentUserType == 'carrier') return true;
     else return false;
   }
+  isClient() {
+    if (this.curentUserType == 'client') return true;
+    else return false;
+  }
 
   refresh() {
     window.location.reload();
   }
 
-  addOfferModal() {
+  addPostModal() {
     let leav_date = this.parserFormatter.format(this.leaving_date);
     let arr_date = this.parserFormatter.format(this.arriving_date);
-    this.auth.addOffer(this.currentUserId, this.truck_id, leav_date, this.leaving_place, arr_date, this.arriving_place, this.price_km_empty, this.price_km_full, this.notes).subscribe((res) => { });
-    this.refresh();
+    if (this.isCarrier()) {
+      this.auth.addOffer(this.currentUserId, this.truck_id, leav_date, this.leaving_place, arr_date, this.arriving_place, this.price_km_empty, this.price_km_full, this.notes).subscribe((res) => { });
+      this.refresh();
+    }
+    else {
+      let max_leav_date = this.parserFormatter.format(this.max_leaving_date);
+      let max_arr_date = this.parserFormatter.format(this.max_arriving_date);
+      this.auth.addRequest(this.currentUserId, leav_date, max_leav_date, this.leaving_place, arr_date, max_arr_date, this.arriving_place, this.goods_type, this.goods_weight, this.goods_volume, this.budget, this.notes).subscribe((res) => { });
+      this.refresh();
+    }
   }
 
   addTruckModal() {
@@ -82,6 +104,10 @@ export class MainPageComponent implements OnInit {
 
   allowAddOffer() {
     if (this.truck_id == "" || this.leaving_date == null || this.leaving_place == "" || this.arriving_date == null || this.arriving_place == "" || this.price_km_empty == "" || this.price_km_full == "" || this.notes == "") return true;
+    return false;
+  }
+  allowAddRequest() {
+    if (this.goods_type == "" || this.goods_volume == "" || this.goods_weight == "" || this.leaving_date == null || this.leaving_place == "" || this.arriving_date == null || this.arriving_place == "" || this.budget == "" || this.notes == "") return true;
     return false;
   }
 

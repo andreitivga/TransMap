@@ -64,7 +64,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="exampleModalLongTitle">Configure Your Offer</h2>
+                <h2 class="modal-title" id="postModalTitle">{{ this.isCarrier() ? "Configure Your Offer" :"Configure
+                    Your Request"}}</h2>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -72,7 +73,8 @@
             <div class="modal-body">
                 <form class="px-4">
                     <div class="row mb-3 px-4">
-                        <select name="truck_sel" class="form-select" id="truck_sel" [(ngModel)]="this.truck_id">
+                        <select *ngIf="isCarrier()" name="truck_sel" class="form-select" id="truck_sel"
+                            [(ngModel)]="this.truck_id">
                             <option selected value="">Select Truck</option>
                             <option [value]="truck.key" *ngFor="let truck of this.trucks | keyvalue">{{ truck.value }}
                             </option>
@@ -94,6 +96,19 @@
                             </button>
                         </div>
                     </div>
+                    <div *ngIf="isClient()" class="input-group mb-3 px-2">
+                        <button class="btn btn-danger" type="button">
+                            Max Leaving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="max_leaving_date"
+                            id="max_leaving_date" [(ngModel)]="this.max_leaving_date" ngbDatepicker
+                            #maxl="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-danger" (click)="maxl.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
                     <div class="row mb-3 px-4">
                         <input type="text" class="form-control" name="leaving_place" [(ngModel)]="this.arriving_place"
                             placeholder="Arriving place">
@@ -110,13 +125,44 @@
                             </button>
                         </div>
                     </div>
-                    <div class="row mb-3 px-4">
+                    <div *ngIf="isClient()" class="input-group mb-3 px-2">
+                        <button class="btn btn-danger" type="button">
+                            Max Arriving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="max_arriving_date"
+                            id="max_arriving_date" [(ngModel)]="this.max_arriving_date" ngbDatepicker
+                            #maxd="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-danger" (click)="maxd.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="isCarrier()" class="row mb-3 px-4">
                         <input type="text" class="form-control" name="price_km_empty" [(ngModel)]="this.price_km_empty"
                             placeholder="Price/km Empty">
                     </div>
-                    <div class="row mb-3 px-4">
+                    <div *ngIf="isCarrier()" class="row mb-3 px-4">
                         <input type="text" class="form-control" name="price_km_full" [(ngModel)]="this.price_km_full"
                             placeholder="Price/km Full">
+                    </div>
+                    <div *ngIf="isClient()">
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_type" name="goods_type"
+                                [(ngModel)]="this.goods_type" placeholder="Goods type">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_volume" name="goods_volume"
+                                [(ngModel)]="this.goods_volume" placeholder="Goods Volume">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_weight" name="goods_weight"
+                                [(ngModel)]="this.goods_weight" placeholder="Goods Weight">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="budget" name="budget" [(ngModel)]="this.budget"
+                                placeholder="Budget(RON)">
+                        </div>
                     </div>
                     <div class="row mb-3 px-4">
                         <textarea class="form-control" placeholder="Notes" name="notes"
@@ -127,8 +173,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" (click)="addOfferModal()"
-                    [disabled]="allowAddOffer()">Save changes</button>
+                <button type="button" class="btn btn-success" (click)="addPostModal()"
+                    [disabled]="allowAddOffer() && allowAddRequest()">Save changes</button>
             </div>
         </div>
     </div>
