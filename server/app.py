@@ -77,7 +77,7 @@ def register():
         return jsonify({'error': 'Username already exists or bad email type.'}), 409
 
 
-@app.route('/offer', methods=['POST'])
+@app.route('/offers', methods=['POST'])
 def add_offer():
     carrier_id = int(request.json['carrier_id'])
     truck_id = int(request.json['truck_id'])
@@ -101,6 +101,29 @@ def update_status_offer():
         db_conn.update_status_offer(status, offer_id)
         return Response(status=200)
     except:
+        return Response(status=400)
+
+
+@app.route('/requests', methods=['POST'])
+def add_request():
+    user_id = int(request.json['user_id'])
+    leaving_date = request.json['leaving_date']
+    max_leaving_date = request.json['max_leaving_date']
+    leaving_place = request.json['leaving_place']
+    arriving_time = request.json['arriving_date']
+    max_arriving_time = request.json['max_arriving_date']
+    arriving_place = request.json['arriving_place']
+    goods_type = request.json['goods_type']
+    goods_volume = float(request.json['goods_volume'])
+    goods_weight = float(request.json['goods_weight'])
+    notes = request.json['notes']
+    budget = float(request.json['budget'])
+    try:
+        db_conn.add_request(user_id, leaving_date, max_leaving_date, leaving_place, arriving_time, max_arriving_time,
+                            arriving_place, goods_type, goods_weight, goods_volume, budget, notes)
+        return Response(status=200)
+    except Exception as e:
+        print(e)
         return Response(status=400)
 
 

@@ -31,6 +31,13 @@ class DBConnect:
         self.con.commit()
         return res
 
+    def add_request(self, user_id,  leaving_date,  max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes):
+        query = 'INSERT INTO Request (user_id, status, leaving_date,  max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place,goods_type, goods_weight, goods_volume,budget, client_notes) VALUES ("{}", "{}", "{}","{}", "{}", "{}","{}", "{}", "{}","{}","{}","{}","{}")'.format(
+            user_id, "available", leaving_date, max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes)
+        res = self.cursor.execute(query)
+        self.con.commit()
+        return res
+
     def update_status_offer(self, status, offer_id):
         query = "UPDATE Offer SET status=(status) WHERE offer_id=(id)".format(
             status, offer_id)
