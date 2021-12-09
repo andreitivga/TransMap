@@ -1,12 +1,217 @@
-<h1>HI, {{ this.currentUserName}}</h1>
 <div>
-    <div class="d-flex flex-column flex-shrink-0 bg-light vh-100" style="width: 100px;">
+    <div class="d-flex flex-column flex-shrink-0 bg-light vh-100" style="width: 250px;">
         <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-            <li class="nav-item"> <a href="#" class="nav-link active py-3 border-bottom"> <i class="fa fa-home"></i> <small>Home</small> </a> </li>
-            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-dashboard"></i> <small>Dashboard</small> </a> </li>
-            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-first-order"></i> <small>My Orders</small> </a> </li>
-            <li> <a href="#" class="nav-link py-3 border-bottom"> <i class="fa fa-cog"></i> <small>Settings</small> </a> </li>
-            <li> <button class="nav-link py-3 border-bottom" (click)="this.auth.logout()"> <i class="fa fa-bookmark"></i> <small>Logout</small> </button> </li>
+            <li>
+                <div class="nav-link py-3 active flex-column border-bottom justify-content-center">
+                    <div class="user-menu">
+                        <mat-icon class="user-photo align-center">account_circle</mat-icon>
+                        <h3>{{ this.currentUserName}}</h3>
+                        <small> {{ this.curentUserType }}</small>
+                    </div>
+
+                </div>
+            </li>
+            <li><a [routerLink]="['/home']" class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                    <div class="d-flex justify-content-around">
+                        <mat-icon>home</mat-icon>
+                        <h3 class="px-4">Home</h3>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" data-bs-toggle="modal"
+                    data-bs-target="#postModal" (click)="this.preparePostModal()">
+                    <mat-icon>add_location</mat-icon>
+                    <h3 class="px-4">{{ this.curentUserType=="carrier" ? "Post Offer": "Post request"}}</h3>
+                </div>
+            </li>
+            <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                    <mat-icon>touch_app</mat-icon>
+                    <h3 class="px-4">{{ this.curentUserType=="carrier" ? "My Offers": "My requests"}}</h3>
+                </div>
+            </li>
+            <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                    <mat-icon> my_location</mat-icon>
+                    <h3 class="px-4">{{ this.curentUserType=="carrier" ? "Status Offer": "Status Request"}}</h3>
+                </div>
+            </li>
+            <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                    <mat-icon> pin_drop</mat-icon>
+                    <h3 class="px-4">Track transport</h3>
+                </div>
+            </li>
+            <li *ngIf="this.curentUserType=='carrier'">
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" data-bs-toggle="modal"
+                    data-bs-target="#addTruckModal" (click)="clearFileds()">
+                    <mat-icon>local_shipping</mat-icon>
+                    <h3 class="px-4">Add Track</h3>
+                </div>
+            </li>
+            <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.auth.logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <h3 class="px-4">Logout</h3>
+                </div>
+            </li>
         </ul>
+    </div>
+</div>
+
+<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="postModalTitle">{{ this.isCarrier() ? "Configure Your Offer" :"Configure
+                    Your Request"}}</h2>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="px-4">
+                    <div class="row mb-3 px-4">
+                        <select *ngIf="isCarrier()" name="truck_sel" class="form-select" id="truck_sel"
+                            [(ngModel)]="this.truck_id">
+                            <option selected value="">Select Truck</option>
+                            <option [value]="truck.key" *ngFor="let truck of this.trucks | keyvalue">{{ truck.value }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" name="leaving_place" [(ngModel)]="this.leaving_place"
+                            placeholder="Leaving place">
+                    </div>
+                    <div class="input-group mb-3 px-2">
+                        <button class="btn btn-secondary" type="button">
+                            Leaving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="leaving_date" id="leaving_date"
+                            [(ngModel)]="this.leaving_date" ngbDatepicker #l="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="l.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="isClient()" class="input-group mb-3 px-2">
+                        <button class="btn btn-danger" type="button">
+                            Max Leaving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="max_leaving_date"
+                            id="max_leaving_date" [(ngModel)]="this.max_leaving_date" ngbDatepicker
+                            #maxl="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-danger" (click)="maxl.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" name="leaving_place" [(ngModel)]="this.arriving_place"
+                            placeholder="Arriving place">
+                    </div>
+                    <div class="input-group mb-3 px-2">
+                        <button class="btn btn-secondary" type="button">
+                            Arriving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="arriving_date" id="arriving_date"
+                            [(ngModel)]="this.arriving_date" ngbDatepicker #d="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="isClient()" class="input-group mb-3 px-2">
+                        <button class="btn btn-danger" type="button">
+                            Max Arriving date
+                        </button>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="max_arriving_date"
+                            id="max_arriving_date" [(ngModel)]="this.max_arriving_date" ngbDatepicker
+                            #maxd="ngbDatepicker">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-danger" (click)="maxd.toggle()" type="button">
+                                <mat-icon>calendar_today</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="isCarrier()" class="row mb-3 px-4">
+                        <input type="text" class="form-control" name="price_km_empty" [(ngModel)]="this.price_km_empty"
+                            placeholder="Price/km Empty">
+                    </div>
+                    <div *ngIf="isCarrier()" class="row mb-3 px-4">
+                        <input type="text" class="form-control" name="price_km_full" [(ngModel)]="this.price_km_full"
+                            placeholder="Price/km Full">
+                    </div>
+                    <div *ngIf="isClient()">
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_type" name="goods_type"
+                                [(ngModel)]="this.goods_type" placeholder="Goods type">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_volume" name="goods_volume"
+                                [(ngModel)]="this.goods_volume" placeholder="Goods Volume">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="goods_weight" name="goods_weight"
+                                [(ngModel)]="this.goods_weight" placeholder="Goods Weight">
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <input type="text" class="form-control" id="budget" name="budget" [(ngModel)]="this.budget"
+                                placeholder="Budget(RON)">
+                        </div>
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <textarea class="form-control" placeholder="Notes" name="notes"
+                            [(ngModel)]="this.notes"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" (click)="addPostModal()"
+                    [disabled]="allowAddOffer() && allowAddRequest()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="addTruckModal" tabindex="-1" role="dialog" aria-labelledby="addTruckModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="addTruckModalTitle">Details about your truck</h2>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="px-4">
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="truck_model" name="truck_model"
+                            [(ngModel)]="this.truck_model" placeholder="Truck Model">
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="truck_volume" name="truck_volume"
+                            [(ngModel)]="this.truck_volume" placeholder="Truck Volume">
+                    </div>
+                    <div class="row mb-3 px-4">
+                        <input type="text" class="form-control" id="truck_weight" name="truck_weight"
+                            [(ngModel)]="this.truck_weight" placeholder="Truck Weight">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="allowAddTruck()"
+                    (click)="addTruckModal()">Save changes</button>
+            </div>
+        </div>
     </div>
 </div>

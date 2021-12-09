@@ -1,0 +1,11 @@
+.user-photo{
+    transform: scale(2);
+    margin-bottom: 20px;
+
+}
+.user-menu{
+    margin-top: 34px;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
