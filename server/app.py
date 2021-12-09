@@ -1,8 +1,10 @@
+from os import stat
 from flask import Flask, request, Response, session
 from flask import json
 from flask.json import jsonify
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from werkzeug.wrappers import response
 from query import DBConnect
 
 
@@ -60,15 +62,16 @@ def register():
     email = request.json['email']
     password = request.json['password']
     user_type = request.json['user_type']
-    first_name= request.json['first_name']
-    last_name= request.json['last_name']
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
     user_types = ['client', 'carrier', 'admin']
     if user_type not in user_types:
         return jsonify({'error': 'Bad user type'}), 401
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     try:
-        db_conn.add_user(email, hashed_password, user_type, first_name, last_name)
-        res=db_conn.get_user_info_by_email(email)
+        db_conn.add_user(email, hashed_password,
+                         user_type, first_name, last_name)
+        res = db_conn.get_user_info_by_email(email)
         return jsonify({'user': {'id': res[0], 'user_type': res[3], 'first_name': res[4]}}), 200
     except:
         return jsonify({'error': 'Username already exists or bad email type.'}), 409
@@ -80,7 +83,7 @@ def add_offer():
     truck_id = int(request.json['truck_id'])
     leaving_date = request.json['leaving_date']
     leaving_place = request.json['leaving_place']
-    arriving_time = request.json['arriving_time']
+    arriving_time = request.json['arriving_date']
     arriving_place = request.json['arriving_place']
     price_km_empty = float(request.json['price_km_empty'])
     price_km_full = float(request.json['price_km_full'])
@@ -94,7 +97,39 @@ def add_offer():
 def update_status_offer():
     status = request.json['status']
     offer_id = request.json['offer_id']
-    db_conn.update_status_offer(status, offer_id)
+    try:
+        db_conn.update_status_offer(status, offer_id)
+        return Response(status=200)
+    except:
+        return Response(status=400)
+
+
+@app.route('/trucks', methods=['POST'])
+def add_truck():
+    model = request.json['model']
+    volume = float(request.json['volume'])
+    weight = float(request.json['weight'])
+    user = int(request.json['user'])
+    try:
+        db_conn.add_truck(model, volume, weight, user)
+        return Response(status=200)
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
+@app.route('/get_trucks_user/<string:user>', methods=['GET'])
+def get_truck_info(user):
+    user = int(user)
+    try:
+        res = db_conn.get_trucks_from_user(user)
+        response = {}
+        for model, id in res:
+            response[id] = model
+        return jsonify(response), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
 
 
 if __name__ == '__main__':

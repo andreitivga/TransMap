@@ -24,9 +24,9 @@ class DBConnect:
         self.con.commit()
         return res
 
-    def add_offer(self, user_id, truck_id, leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_notes):
-        query = 'INSERT INTO Offer (carrier_id , truck_id, status, leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_notes) VALUES ("{}", "{}", "{}")'.format(
-            user_id, truck_id, "available", leaving_date, leaving_place, arriving_time, arriving_place, price_km_empty, price_km_full, carrier_notes)
+    def add_offer(self, user_id, truck_id, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes):
+        query = 'INSERT INTO Offer (carrier_id , truck_id, status, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes) VALUES ("{}", "{}", "{}","{}", "{}", "{}","{}", "{}", "{}","{}")'.format(
+            user_id, truck_id, "available", leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes)
         res = self.cursor.execute(query)
         self.con.commit()
         return res
@@ -36,6 +36,19 @@ class DBConnect:
             status, offer_id)
         res = self.cursor.execute(query)
         self.con.commit()
+        return res
+
+    def add_truck(self, model, volume, weight, user):
+        query = 'INSERT INTO Truck (truck_model, truck_volume, truck_weight,truck_user) VALUES ("{}", "{}", "{}", "{}")'.format(
+            model, volume, weight, user)
+        res = self.cursor.execute(query)
+        self.con.commit()
+        return res
+
+    def get_trucks_from_user(self, user_id):
+        query1 = 'SELECT truck_model,truck_id FROM Truck WHERE truck_user = {}'.format(
+            user_id)
+        res = self.cursor.execute(query1).fetchall()
         return res
 
     def __del__(self):
