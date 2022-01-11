@@ -29,8 +29,8 @@ export class MapComponentComponent implements OnInit {
     this.view = new MapView({
       map: this.map,
       container: "viewDiv",
-      center: [26.10253839, 44.4267674],
-      zoom: 12
+      center: [25, 46],
+      zoom: 6
     });
 
     this.view.when(() => {
