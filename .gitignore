@@ -3,6 +3,7 @@ server/ienv
 
 __pycache__/
 *.pyc
+isienv/
 venv/*
 .idea/*
 
