@@ -208,5 +208,54 @@ def get_requests_user(user):
         return Response(status=400)
 
 
+@app.route('/offers/<string:user>/', methods=['GET'])
+def get_offers_user(user):
+    user = int(user)
+    try:
+        res = db_conn.get_offers_from_user(user)
+        response = []
+        for id, _, truck_id, status, leaving_date, leaving_place, arriving_date, arriving_place, price_empty, price_full, carrier_notes in res:
+            contract = {}
+            contact = {}
+            if status != 'available':
+                res2 = db_conn.get_contract_from_user(id, None)
+                if res2:
+                    (offer_id, request_id, status_contract, details) = res2
+                    contract = {
+                        'offer_id': id,
+                        'request_id': request_id,
+                        'status': status_contract,
+                        'details': details
+                    }
+                contact_details = db_conn.get_contact_info(None, request_id)
+                if contact_details:
+                    (email, fname, lname, tel) = contact_details
+                    contact = {
+                        'email': email,
+                        'fname': fname,
+                        'lname': lname,
+                        'tel': tel,
+                    }
+            details = {
+                'price_empty': price_empty,
+                'price_full': price_full,
+                'carrier_notes': carrier_notes,
+            }
+            response.append({
+                'no': id,
+                'status': status,
+                'leaving_place': leaving_place,
+                'leaving_date': leaving_date,
+                'arriving_place': arriving_place,
+                'arriving_date': arriving_date,
+                'details': details,
+                'contract': contract,
+                'contact': contact})
+        return jsonify(response), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

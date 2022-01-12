@@ -43,6 +43,13 @@ class DBConnect:
             user_id)
         res = self.cursor.execute(query1).fetchall()
         return res
+    
+    def get_offers_from_user(self, user_id):
+        query1 = 'SELECT * FROM Offer WHERE carrier_id = {}'.format(
+            user_id)
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
 
     def get_contract_from_user(self, offer_id, request_id):
         if not offer_id:
