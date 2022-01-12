@@ -38,6 +38,37 @@ class DBConnect:
         self.con.commit()
         return res
 
+    def get_requests_from_user(self, user_id):
+        query1 = 'SELECT * FROM Request WHERE user_id = {}'.format(
+            user_id)
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
+    def get_contract_from_user(self, offer_id, request_id):
+        if not offer_id:
+            query1 = 'SELECT * FROM Offer_Request WHERE request_id = "{}"'.format(
+                request_id)
+            res = self.cursor.execute(query1).fetchone()
+        else:
+            query1 = 'SELECT * FROM Offer_Request WHERE offer_id = "{}"'.format(
+                offer_id)
+            res = self.cursor.execute(query1).fetchone()
+        return res
+
+    def get_contact_info(self, offer_id, request_id):
+        if not offer_id:
+            query1 = 'SELECT user_id FROM Request WHERE request_id = "{}"'.format(
+                request_id)
+            res = self.cursor.execute(query1).fetchone()
+        else:
+            query1 = 'SELECT carrier_id FROM Offer WHERE offer_id = "{}"'.format(
+                offer_id)
+            res = self.cursor.execute(query1).fetchone()
+        query2 = 'SELECT email, first_name, last_name, tel FROM Users WHERE user_id = "{}"'.format(
+            res[0])
+        res = self.cursor.execute(query2).fetchone()
+        return res
+
     def update_status_offer(self, status, offer_id):
         query = "UPDATE Offer SET status=(status) WHERE offer_id=(id)".format(
             status, offer_id)

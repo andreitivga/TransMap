@@ -155,5 +155,58 @@ def get_truck_info(user):
         return Response(status=400)
 
 
+@app.route('/requests/<string:user>/', methods=['GET'])
+def get_requests_user(user):
+    user = int(user)
+    try:
+        res = db_conn.get_requests_from_user(user)
+        response = []
+        for id, _, status, leaving_place, leaving_date, max_leaving_date, arriving_place,  arriving_date, max_arriving_date, goods_type, goods_weight, goods_volume, budget, notes in res:
+            contract = {}
+            contact = {}
+            if status != 'available':
+                res2 = db_conn.get_contract_from_user(None, id)
+                if res2:
+                    (offer_id, _, status_contract, details) = res2
+                    contract = {
+                        'offer_id': offer_id,
+                        'request_id': id,
+                        'status': status_contract,
+                        'details': details
+                    }
+                contact_details = db_conn.get_contact_info(offer_id, None)
+                if contact_details:
+                    (email, fname, lname, tel) = contact_details
+                    contact = {
+                        'email': email,
+                        'fname': fname,
+                        'lname': lname,
+                        'tel': tel,
+                    }
+            details = {
+                'max_leaving_date': max_leaving_date,
+                'max_arriving_date': max_arriving_date,
+                'goods_type': goods_type,
+                'goods_weight': goods_weight,
+                'goods_volume': goods_volume,
+                'budget': budget,
+                'notes': notes,
+            }
+            response.append({
+                'no': id,
+                'status': status,
+                'leaving_place': leaving_place,
+                'leaving_date': leaving_date,
+                'arriving_place': arriving_place,
+                'arriving_date': arriving_date,
+                'details': details,
+                'contract': contract,
+                'contact': contact})
+        return jsonify(response), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
