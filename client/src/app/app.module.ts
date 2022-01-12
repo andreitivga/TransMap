@@ -37,7 +37,7 @@ import { MapComponentComponent } from './map-component/map-component.component';
     FormsModule,
     MatSelectModule,
     MatDatepickerModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

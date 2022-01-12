@@ -33,6 +33,7 @@ export class MainPageComponent implements OnInit {
   public goods_weight: string = "";
   public goods_volume: string = "";
   public budget: string = "";
+  public user_requests: any = [];
 
   constructor(public auth: BackendApiService, private parserFormatter: NgbDateParserFormatter) { }
 
@@ -45,9 +46,13 @@ export class MainPageComponent implements OnInit {
 
   getTrucks() {
     this.auth.getTruckfromUser(this.currentUserId).subscribe((res) => { this.trucks = res });
-    // TODO GET TRUCKS - backend+frontend
-    // this.trucks = [1, 2, 3, 4];
   }
+
+  manageModal() {
+    if (this.isClient()) this.auth.getRequestsfromUser(this.currentUserId).subscribe((res) => { this.user_requests = res; console.log(this.user_requests); });
+    else { this.auth.getOffersfromUser(this.currentUserId).subscribe((res) => { this.user_requests = res; console.log(this.user_requests); }); }
+  }
+
   clearFileds() {
     this.truck_model = "";
     this.truck_volume = "";
@@ -116,4 +121,7 @@ export class MainPageComponent implements OnInit {
     return false;
   }
 
+  notEmptyJson(obj: any) {
+    return Object.keys(obj).length;
+  }
 }

@@ -26,7 +26,8 @@
                 </div>
             </li>
             <li>
-                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" data-bs-toggle="modal"
+                    data-bs-target="#manageModal" (click)="this.manageModal()">
                     <mat-icon>touch_app</mat-icon>
                     <h3 class="px-4">{{ this.curentUserType=="carrier" ? "My Offers": "My requests"}}</h3>
                 </div>
@@ -207,6 +208,98 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success" [disabled]="allowAddTruck()"
                     (click)="addTruckModal()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="manageModal" tabindex="-1" role="dialog" aria-labelledby="manageModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="postModalTitle">{{ this.isCarrier() ? "Details about your Offers" :"Details
+                    about your Requests"}}</h2>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 *ngIf="this.user_requests.length==0">No records registered!</h3>
+                <div class="table-responsive justify-content-center">
+                    <table class="table" *ngIf="this.user_requests.length>0">
+                        <thead class="thead-light btn-dark">
+                            <tr>
+                                <th scope="col">NO.</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Leaving Place</th>
+                                <th scope="col">Leaving Date</th>
+                                <th scope="col">Arriving Place</th>
+                                <th scope="col">Leaving Date</th>
+                                <th scope="col">Your Details</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Contract Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of this.user_requests">
+                                <td>#{{ item['no'] }}</td>
+                                <td
+                                    [ngClass]="{'available': item['status'] == 'available', 'confirm' : item['status'] == 'confirmed', 'canceled': item['status'] == 'canceled' ,'finalized': item['status'] == 'finalized'}">
+                                    {{ item['status'] }}</td>
+                                <td>{{ item['leaving_place'] }}</td>
+                                <td>{{ item['leaving_date'] }}</td>
+                                <td>{{ item['arriving_place'] }}</td>
+                                <td>{{ item['arriving_date'] }}</td>
+                                <td>
+                                    <ng-template #detailsText>
+                                        <p *ngFor="let d of item['details'] | keyvalue "> {{d.key}} {{ d.value}} <br>
+                                        </p>
+                                        <!-- Budget: {{item['details']['budget']}} <br> Goods Type:
+                                        {{item['details']['goods_type']}} <br> Goods Volume:
+                                        {{item['details']['goods_volume']}}
+                                        <br> Goods Weight: {{item['details']['goods_weight']}} <br> Max Arriving Date:
+                                        {{item['details']['max_arriving_date']}} <br> Max Leaving Date:
+                                        {{item['details']['max_leaving_date']}} <br> Notes: {{item['details']['notes']}} -->
+                                    </ng-template>
+                                    <mat-icon class="cursor-pointer" placement="top" [ngbPopover]="detailsText"> launch
+                                    </mat-icon>
+                                </td>
+                                <td>
+                                    <ng-template #contactText>
+                                        <p>Name: {{item['contact']['fname']}} <br></p>
+                                        <p>Tel: {{item['contact']['tel']}} <br></p>
+                                        <p>Email: {{item['contact']['email']}}<br> </p>
+                                    </ng-template>
+                                    <mat-icon class="cursor-pointer"
+                                        *ngIf="notEmptyJson(item['contact']); else notcontact"
+                                        [ngbPopover]="contactText">
+                                        phone_in_talk</mat-icon>
+                                    <ng-template #notcontact></ng-template>
+                                </td>
+                                <td>
+                                    <ng-template #popoverText>
+                                        <p>Status: {{item['contract']['status']}} <br></p>
+                                        <p>OfferNO:
+                                            #{{item['contract']['offer_id']}} <br></p>
+                                        <p>RequestNO:
+                                            #{{item['contract']['request_id']}} <br> </p>
+                                        <p>Details:{{item['contract']['details']}}</p>
+                                    </ng-template>
+                                    <mat-icon class="cursor-pointer"
+                                        *ngIf="notEmptyJson(item['contract']); else notcontract" placement="top"
+                                        [ngbPopover]="popoverText" popoverTitle="Contract">
+                                        insert_drive_file
+                                    </mat-icon>
+                                    <ng-template #notcontract></ng-template>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

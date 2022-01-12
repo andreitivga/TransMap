@@ -43,5 +43,12 @@ export class BackendApiService {
     return this.http.post<any>(backendPath + 'requests', { user_id: user_id, leaving_date: leaving_date, max_leaving_date: max_leaving_date, leaving_place: leaving_place, arriving_date: arriving_date, max_arriving_date: max_arriving_date, arriving_place: arriving_place, goods_type: goods_type, goods_weight: goods_weight, goods_volume: goods_volume, budget: budget, notes: notes })
   }
 
+  getRequestsfromUser(user: string | null) {
+    return this.http.get<any>(backendPath + '/requests/' + user)
+  }
+
+  getOffersfromUser(user: string | null) {
+    return this.http.get<any>(backendPath + '/offers/' + user)
+  }
 
 }

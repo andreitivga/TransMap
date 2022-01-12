@@ -9,3 +9,31 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+th,td {
+    text-align: center;
+}
+
+tr:hover{
+    background-color:whitesmoke;
+}
+
+.table-pad>tbody>tr>td, .table-pad>tbody>tr>th, .table-pad>tfoot>tr>td, .table-pad>tfoot>tr>th, .table-pad>thead>tr>td, .table-pad>thead>tr>th {
+    padding: 1rem 1rem;
+}
+
+.available{
+    background-color: rgba(188, 235, 188, 0.952);
+}
+
+.confirm{
+    background-color: rgb(235, 202, 164);
+}
+
+.canceled{
+    background-color: rgb(233, 187, 187);
+}
+
+.finalized{
+    background-color: rgb(219, 214, 214);
+}
