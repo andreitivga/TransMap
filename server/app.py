@@ -256,6 +256,28 @@ def get_offers_user(user):
         print(e)
         return Response(status=400)
 
+@app.route('/offers/fetchAvailableOffers', methods=['GET'])
+def fetchAllOffers():
+
+    try:
+        res = db_conn.get_available_offers()
+        return jsonify(res), 200
+
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+@app.route('/requests/fetchAvailableRequests', methods=['GET'])
+def fetchAllRequests():
+
+    try:
+        res = db_conn.get_available_requests()
+        return jsonify(res), 200
+
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -96,5 +96,15 @@ class DBConnect:
         res = self.cursor.execute(query1).fetchall()
         return res
 
+    def get_available_offers(self):
+        query1 = 'SELECT * from Offer WHERE status="available"'
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
+    def get_available_requests(self):
+        query1 = 'SELECT * from Request WHERE status="available"'
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
     def __del__(self):
         self.con.close()
