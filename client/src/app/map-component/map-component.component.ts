@@ -15,57 +15,86 @@ import { BackendApiService } from '../services/backend-api.service';
 
 export class MapComponentComponent implements OnInit {
 
-  public map = new ArcGISMap({ basemap: "streets-vector" });
-  public view = new MapView({
+  private curentUserType!: string | null;
+  private map = new ArcGISMap({ basemap: "streets-vector" });
+  private view = new MapView({
     map: this.map,
     container: "viewDiv",
     center: [-118.244, 34.052],
     zoom: 12
   });
-  public graphicsLayer = new GraphicsLayer();
-  public availablePoints: any = [];
-  public availableRequests: any = [];
-
-  public acceptRequest : any = {
-    title: "Accept this request",
+  private graphicsLayer = new GraphicsLayer();
+  private availablePoints: any = [];
+  private availableRequests: any = [];
+  private acceptAvailable: any = {
+    title: "Accept this Request",
     id: "accept-request",
     image: "../../assets/acceptRequest.png"
     ,
   };
+  private userIcon = {
+    type: "text",
+    color: "#7A003C",
+    text: "\ue675", // esri-icon-map-user
+    font: {
+      size: 20,
+      family: "CalciteWebCoreIcons"
+    }
+  };
+  private truckIcon = {
+    type: "text",
+    color: "#7A003C",
+    text: "\ue660", // esri-icon-map-shoppingbag
+    font: {
+      size: 20,
+      family: "CalciteWebCoreIcons"
+    }
+  };
+  private popupTemplateRequests = {
+    title: "{Name}",
+    content: "Leaves from {city1} to {city2} from {date1} to {date3}. Accepts delay from {date2} to {date4}. \
+    Goods: {goods}. Weight:{weight}, Volume: {volume}. Budget: {price}  RON. Client notes: {cn}",
+    actions: [this.acceptAvailable]
+  };
+  private popupTemplateOffers = {
+    title: "{Name}",
+    content: "Leaves from {city1} to {city2} from {date1} to {date2}. Price/km empty: {price_empty} RON. \
+    Price/km full: {price_full} RON. Carrier notes: {cn}",
+    actions: [this.acceptAvailable]
+  };
+
   constructor(private backServ: BackendApiService) {
   }
 
   ngOnInit(): void {
+    this.curentUserType = localStorage.getItem('user_type');
     this.map = new ArcGISMap({
       basemap: "streets-vector"
     });
-
     this.view = new MapView({
       map: this.map,
       container: "viewDiv",
       center: [25, 46],
       zoom: 6
     });
-
-    this.fetchAvailableRequests();
+    this.fetchAvailableRequests(this.curentUserType);
     this.map.add(this.graphicsLayer);
     this.view.when(() => {
       console.log("Map is loaded");
     });
-
     this.view.popup.on("trigger-action", (event) => {
       if (event.action.id === "accept-request") {
-        this.acceptRequestFunction(this.view.popup.title.split('#')[1]);
+        this.acceptAvailableFunction(this.view.popup.title.split('#')[1]);
       }
     });
   }
 
-  fetchAvailableRequests() {
-
-    this.backServ.getAvailableRequests().subscribe((res) => {
+  fetchAvailableRequests(user_type: string | null) {
+    this.backServ.getAvailableRequests(user_type).subscribe((res) => {
       this.availableRequests = res;
       this.availableRequests.forEach((element: any) => {
-        let city = element[3];
+        if (user_type == 'carrier') var city = element[3];
+        else var city = element[5];
         switch (city) {
           case 'Bucuresti': {
             const point = new Point({
@@ -125,16 +154,8 @@ export class MapComponentComponent implements OnInit {
           }
         }
       });
-
-      const popupTemplate = {
-        title: "{Name}",
-        content: "Leaves from {city1} to {city2} from {date1} to {date3}. Accepts delay from {date2} to {date4}. \
-        Goods: {goods}. Weight:{weight}, Volume: {volume}. Price: {price}. Client notes: {cn}",
-        actions: [this.acceptRequest]
-      };
-
       this.availablePoints.forEach((element: any) => {
-        const attributes = {
+        const attributesRequest = {
           Name: "Request #" + element[1][0],
           city1: element[1][3],
           city2: element[1][6],
@@ -149,22 +170,28 @@ export class MapComponentComponent implements OnInit {
           cn: element[1][13],
         };
 
-        const textSymbol = {
-          type: "text", // autocasts as new TextSymbol()
-          color: "#7A003C",
-          text: "\ue675", // esri-icon-map-pin
-          font: {
-            // autocasts as new Font()
-            size: 20,
-            family: "CalciteWebCoreIcons"
-          }
+        const attributesOffer = {
+          Name: "Offer #" + element[1][0],
+          city1: element[1][5],
+          city2: element[1][7],
+          date1: element[1][4],
+          date2: element[1][6],
+          price_empty: element[1][8],
+          price_full: element[1][9],
+          cn: element[1][10],
         };
-
-        const pointGraphic = new Graphic({
+        if (user_type == 'carrier') var pointGraphic = new Graphic({
           geometry: element[0],
-          symbol: textSymbol,
-          attributes: attributes,
-          popupTemplate: popupTemplate
+          symbol: this.userIcon,
+          attributes: attributesRequest,
+          popupTemplate: this.popupTemplateRequests
+
+        });
+        else var pointGraphic = new Graphic({
+          geometry: element[0],
+          symbol: this.truckIcon,
+          attributes: attributesOffer,
+          popupTemplate: this.popupTemplateOffers
 
         });
         this.graphicsLayer.add(pointGraphic);
@@ -172,7 +199,7 @@ export class MapComponentComponent implements OnInit {
     });
   }
 
-  acceptRequestFunction(id_request: any) {
+  acceptAvailableFunction(id_request: any) {
     console.log(id_request);
     // TODO: post request cu acest title
   }

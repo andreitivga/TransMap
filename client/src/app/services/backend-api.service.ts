@@ -51,8 +51,8 @@ export class BackendApiService {
     return this.http.get<any>(backendPath + '/offers/' + user)
   }
 
-  getAvailableRequests() {
-    return this.http.get<any>(backendPath + '/requests/fetchAvailableRequests')
+  getAvailableRequests(user_type: string | null) {
+    return this.http.get<any>(backendPath + '/available/' + user_type)
   }
 
 }

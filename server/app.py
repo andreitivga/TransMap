@@ -256,6 +256,7 @@ def get_offers_user(user):
         print(e)
         return Response(status=400)
 
+
 @app.route('/offers/fetchAvailableOffers', methods=['GET'])
 def fetchAllOffers():
 
@@ -267,12 +268,16 @@ def fetchAllOffers():
         print(e)
         return Response(status=400)
 
-@app.route('/requests/fetchAvailableRequests', methods=['GET'])
-def fetchAllRequests():
 
+@app.route('/available/<string:user_type>/', methods=['GET'])
+def fetchAllRequests(user_type):
     try:
-        res = db_conn.get_available_requests()
-        return jsonify(res), 200
+        if user_type == 'carrier':
+            res = db_conn.get_available_requests()
+            return jsonify(res), 200
+        else:
+            res = db_conn.get_available_offers()
+            return jsonify(res), 200
 
     except Exception as e:
         print(e)

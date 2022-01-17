@@ -43,13 +43,12 @@ class DBConnect:
             user_id)
         res = self.cursor.execute(query1).fetchall()
         return res
-    
+
     def get_offers_from_user(self, user_id):
         query1 = 'SELECT * FROM Offer WHERE carrier_id = {}'.format(
             user_id)
         res = self.cursor.execute(query1).fetchall()
         return res
-
 
     def get_contract_from_user(self, offer_id, request_id):
         if not offer_id:
@@ -103,6 +102,11 @@ class DBConnect:
 
     def get_available_requests(self):
         query1 = 'SELECT * from Request WHERE status="available"'
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
+    def get_available_offers(self):
+        query1 = 'SELECT * from Offer WHERE status="available"'
         res = self.cursor.execute(query1).fetchall()
         return res
 
