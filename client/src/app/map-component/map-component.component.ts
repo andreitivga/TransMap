@@ -6,6 +6,12 @@ import Graphic from "@arcgis/core/Graphic";
 import Point from '@arcgis/core/geometry/Point'
 import { cityMapping } from '../app.component';
 import { BackendApiService } from '../services/backend-api.service';
+import GeometryService from '@arcgis/core/tasks/GeometryService';
+import DistanceParameters from "@arcgis/core/rest/support/DistanceParameters";
+import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
+import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
+
+
 
 @Component({
   selector: 'app-map-component',
@@ -14,7 +20,8 @@ import { BackendApiService } from '../services/backend-api.service';
 })
 
 export class MapComponentComponent implements OnInit {
-
+  public currentUserId!: string | null;
+  private data: any = [];
   private curentUserType!: string | null;
   private map = new ArcGISMap({ basemap: "streets-vector" });
   private view = new MapView({
@@ -67,6 +74,7 @@ export class MapComponentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentUserId = localStorage.getItem('user_id');
     this.curentUserType = localStorage.getItem('user_type');
     this.map = new ArcGISMap({
       basemap: "streets-vector"
@@ -199,9 +207,115 @@ export class MapComponentComponent implements OnInit {
     });
   }
 
-  acceptAvailableFunction(id_request: any) {
-    console.log(id_request);
-    // TODO: post request cu acest title
+  getCityCoordonates(city: string) {
+    switch (city) {
+      case 'Bucuresti': {
+        return {
+          longitude: cityMapping.Bucuresti[0],
+          latitude: cityMapping.Bucuresti[1],
+          spatialReference:({
+            wkid: 5523
+          })
+        };
+        break;
+      }
+      case 'Constanta': {
+        return {
+          longitude: cityMapping.Constanta[0],
+          latitude: cityMapping.Constanta[1],
+          spatialReference:({
+            wkid: 5523
+          })
+        };
+        break;
+      }
+      case 'Brasov': {
+        return {
+          longitude: cityMapping.Brasov[0],
+          latitude: cityMapping.Brasov[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+        break;
+      }
+      case 'Cluj': {
+        return {
+          longitude: cityMapping.Cluj[0],
+          latitude: cityMapping.Cluj[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+        break;
+      }
+      case 'Iasi': {
+        return {
+          longitude: cityMapping.Iasi[0],
+          latitude: cityMapping.Iasi[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+        break;
+      }
+      case 'Focsani': {
+        return {
+          longitude: cityMapping.Focsani[0],
+          latitude: cityMapping.Focsani[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+        break;
+      }
+      case 'Timisoara': {
+        return {
+          longitude: cityMapping.Timisoara[0],
+          latitude: cityMapping.Timisoara[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+        break;
+      }
+      default:{
+        return {
+          longitude: cityMapping.Timisoara[0],
+          latitude: cityMapping.Timisoara[1],
+          spatialReference:({
+            wkid: 4326
+          })
+        };
+      }
+    }
+  }
+
+  calculateDistance(city1: string, city2: string) {
+    let geometryService = new GeometryService();
+
+    let pt1 = new Point(this.getCityCoordonates(city1));
+    let pt2 = new Point(this.getCityCoordonates(city2));
+    let geometry = geometryEngine.distance(pt1,pt2, 'meters');
+    return geometry;
+  
+  }
+
+  acceptAvailableFunction(id: any) {
+    console.log(id);
+    if (this.curentUserType == 'carrier') {
+      this.backServ.getRequestById(id).subscribe((res) => {
+        this.data = res;
+        let city1 = this.data[3];
+        let city2 = this.data[6];
+        let date1 = this.data[4];
+        let date3 = this.data[7];
+        let price = this.data[12];
+        let status = 'confirmed';
+        console.log(this.calculateDistance(city1,city2));
+       // this.backServ.addOffer(this.currentUserId, '', date1, city1, date3, city2,)
+      })
+    }
   }
 
 }

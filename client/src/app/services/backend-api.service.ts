@@ -55,4 +55,12 @@ export class BackendApiService {
     return this.http.get<any>(backendPath + '/available/' + user_type)
   }
 
+  getRequestById(request_id: string){
+    return this.http.get<any>(backendPath + '/request/' + request_id)
+  }
+
+  getOfferById(offer_id: string){
+    return this.http.get<any>(backendPath + '/offer/' + offer_id)
+  }
+
 }

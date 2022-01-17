@@ -110,5 +110,17 @@ class DBConnect:
         res = self.cursor.execute(query1).fetchall()
         return res
 
+    def get_requests_from_user_by_id(self, request_id):
+        query1 = 'SELECT * FROM Request WHERE request_id = {}'.format(
+            request_id)
+        res = self.cursor.execute(query1).fetchone()
+        return res
+
+    def get_offers_from_user_by_id(self, offer_id):
+        query1 = 'SELECT * FROM Offer WHERE offer_id = {}'.format(
+            offer_id)
+        res = self.cursor.execute(query1).fetchone()
+        return res
+
     def __del__(self):
         self.con.close()
