@@ -284,5 +284,26 @@ def fetchAllRequests(user_type):
         return Response(status=400)
 
 
+@app.route('/request/<string:request_id>/', methods=['GET'])
+def fetchByRequestId(request_id):
+    try:
+        res = db_conn.get_requests_from_user_by_id(request_id)
+        return jsonify(res), 200
+
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+@app.route('/offer/<string:offer_id>/', methods=['GET'])
+def fetchByOfferId(offer_id):
+    try:
+        res = db_conn.get_offers_from_user_by_id(offer_id)
+        return jsonify(res), 200
+
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
