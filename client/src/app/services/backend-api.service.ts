@@ -55,12 +55,20 @@ export class BackendApiService {
     return this.http.get<any>(backendPath + '/available/' + user_type)
   }
 
-  getRequestById(request_id: string){
+  getRequestById(request_id: string) {
     return this.http.get<any>(backendPath + '/request/' + request_id)
   }
 
-  getOfferById(offer_id: string){
+  getOfferById(offer_id: string) {
     return this.http.get<any>(backendPath + '/offer/' + offer_id)
+  }
+
+  acceptRequestPopup(carrier_id: string | null, request_id: string, user_type: string) {
+    return this.http.post<any>(backendPath + 'contract/', { carrier_id: carrier_id, request_id: request_id, user_type: user_type })
+  }
+
+  acceptOfferPopup(client_id: string | null, offer_id: string, user_type: string) {
+    return this.http.post<any>(backendPath + 'contract/', { client_id: client_id, offer_id: offer_id, user_type: user_type })
   }
 
 }

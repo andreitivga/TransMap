@@ -6,7 +6,8 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from werkzeug.wrappers import response
 from query import DBConnect
-
+from geopy.distance import great_circle
+from datetime import datetime
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -88,7 +89,7 @@ def add_offer():
     price_km_empty = float(request.json['price_km_empty'])
     price_km_full = float(request.json['price_km_full'])
     carrier_notes = request.json['notes']
-    db_conn.add_offer(carrier_id, truck_id, leaving_date, leaving_place, arriving_time,
+    db_conn.add_offer(carrier_id, truck_id, "available", leaving_date, leaving_place, arriving_time,
                       arriving_place, price_km_empty, price_km_full, carrier_notes)
     return Response(status=200)
 
@@ -119,7 +120,7 @@ def add_request():
     notes = request.json['notes']
     budget = float(request.json['budget'])
     try:
-        db_conn.add_request(user_id, leaving_date, max_leaving_date, leaving_place, arriving_time, max_arriving_time,
+        db_conn.add_request(user_id, "available", leaving_date, max_leaving_date, leaving_place, arriving_time, max_arriving_time,
                             arriving_place, goods_type, goods_weight, goods_volume, budget, notes)
         return Response(status=200)
     except Exception as e:
@@ -167,11 +168,13 @@ def get_requests_user(user):
             if status != 'available':
                 res2 = db_conn.get_contract_from_user(None, id)
                 if res2:
-                    (offer_id, _, status_contract, details) = res2
+                    (offer_id, _, details, date_emitted, price, distance) = res2
                     contract = {
                         'offer_id': offer_id,
                         'request_id': id,
-                        'status': status_contract,
+                        'date emitted':  date_emitted,
+                        'distance': distance,
+                        'price': price,
                         'details': details
                     }
                 contact_details = db_conn.get_contact_info(offer_id, None)
@@ -220,11 +223,14 @@ def get_offers_user(user):
             if status != 'available':
                 res2 = db_conn.get_contract_from_user(id, None)
                 if res2:
-                    (offer_id, request_id, status_contract, details) = res2
+                    (offer_id, request_id, details,
+                     date_emitted, price, distance) = res2
                     contract = {
                         'offer_id': id,
                         'request_id': request_id,
-                        'status': status_contract,
+                        'date emitted':  date_emitted,
+                        'distance': distance,
+                        'price': price,
                         'details': details
                     }
                 contact_details = db_conn.get_contact_info(None, request_id)
@@ -294,11 +300,77 @@ def fetchByRequestId(request_id):
         print(e)
         return Response(status=400)
 
+
 @app.route('/offer/<string:offer_id>/', methods=['GET'])
 def fetchByOfferId(offer_id):
     try:
         res = db_conn.get_offers_from_user_by_id(offer_id)
         return jsonify(res), 200
+
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
+cityMapping = {
+    'Bucuresti': (26.10389, 44.43278),
+    'Constanta': (28.6383, 44.1733),
+    'Brasov': (25.3441, 45.71),
+    'Cluj': (23.6172, 46.7784),
+    'Iasi': (27.57, 47.17),
+    'Focsani': (27.1833, 45.7),
+    'Timisoara': (21.2272, 45.749)
+}
+
+
+@app.route('/contract/', methods=['POST'])
+def postContract():
+    user_type = request.json["user_type"]
+    try:
+        if user_type == 'carrier':
+            carrier = request.json["carrier_id"]
+            id = request.json["request_id"]
+            change_status = db_conn.update_status_request(
+                status="confirmed", request_id=id)
+            request_detail = db_conn.get_requests_from_user_by_id(id)
+            city1 = request_detail[3]
+            city2 = request_detail[6]
+            date1 = request_detail[4]
+            date2 = request_detail[7]
+            distance = round(great_circle(
+                cityMapping[city1], cityMapping[city2]).km, 2)
+            price_km = round(int(request_detail[12])/distance, 2)
+            offer_id = db_conn.add_offer(
+                carrier, '', "confirmed", date1, city1, date2, city2, price_km, price_km, '')
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y")
+            addContr = db_conn.add_contract(
+                offer_id, id, '', dt_string, request_detail[12], distance)
+            return jsonify(request_detail), 200
+        elif user_type == 'client':
+            client = request.json["client_id"]
+            id = request.json["offer_id"]
+            offer_detail = db_conn.get_offers_from_user_by_id(id)
+            change_status = db_conn.update_status_offer("confirmed", id)
+            city1 = offer_detail[5]
+            city2 = offer_detail[7]
+            date1 = offer_detail[4]
+            date2 = offer_detail[6]
+            km_full = offer_detail[9]
+            distance = round(great_circle(
+                cityMapping[city1], cityMapping[city2]).km, 2)
+            budget = round(km_full*distance, 2)
+            request_id = db_conn.add_request(
+                client, "confirmed", date1, date1, city1, date2, date2, city2, '', '', '', budget, '')
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y")
+            addContr = db_conn.add_contract(
+                id, request_id, '', dt_string, budget, distance)
+            return jsonify(offer_detail), 200
+
+        else:
+            res = db_conn.get_available_offers()
+            return jsonify(res), 200
 
     except Exception as e:
         print(e)

@@ -272,19 +272,21 @@
                                         <p>Email: {{item['contact']['email']}}<br> </p>
                                     </ng-template>
                                     <mat-icon class="cursor-pointer"
-                                        *ngIf="notEmptyJson(item['contact']); else notcontact"
+                                        *ngIf="notEmptyJson(item['contract']); else notcontact"
                                         [ngbPopover]="contactText">
                                         phone_in_talk</mat-icon>
                                     <ng-template #notcontact></ng-template>
                                 </td>
                                 <td>
                                     <ng-template #popoverText>
-                                        <p>Status: {{item['contract']['status']}} <br></p>
+                                        <p>Date emitted: {{item['contract']['date emitted']}} <br></p>
                                         <p>OfferNO:
                                             #{{item['contract']['offer_id']}} <br></p>
                                         <p>RequestNO:
                                             #{{item['contract']['request_id']}} <br> </p>
-                                        <p>Details:{{item['contract']['details']}}</p>
+                                        <p>Value: {{item['contract']['price']}}</p>
+                                        <p>Distance: {{item['contract']['distance']}}</p>
+                                        <p>Details: {{item['contract']['details']}}</p>
                                     </ng-template>
                                     <mat-icon class="cursor-pointer"
                                         *ngIf="notEmptyJson(item['contract']); else notcontract" placement="top"

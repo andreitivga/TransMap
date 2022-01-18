@@ -24,19 +24,19 @@ class DBConnect:
         self.con.commit()
         return res
 
-    def add_offer(self, user_id, truck_id, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes):
+    def add_offer(self, user_id, truck_id, status, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes):
         query = 'INSERT INTO Offer (carrier_id , truck_id, status, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes) VALUES ("{}", "{}", "{}","{}", "{}", "{}","{}", "{}", "{}","{}")'.format(
-            user_id, truck_id, "available", leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes)
+            user_id, truck_id, status, leaving_date, leaving_place, arriving_date, arriving_place, price_km_empty, price_km_full, carrier_notes)
         res = self.cursor.execute(query)
         self.con.commit()
-        return res
+        return self.cursor.lastrowid
 
-    def add_request(self, user_id,  leaving_date,  max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes):
+    def add_request(self, user_id, status, leaving_date,  max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes):
         query = 'INSERT INTO Request (user_id, status, leaving_date,  max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place,goods_type, goods_weight, goods_volume,budget, client_notes) VALUES ("{}", "{}", "{}","{}", "{}", "{}","{}", "{}", "{}","{}","{}","{}","{}")'.format(
-            user_id, "available", leaving_date, max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes)
+            user_id, status, leaving_date, max_leaving_date, leaving_place, arriving_date, max_arriving_date, arriving_place, gtype, weight, volume, budget, notes)
         res = self.cursor.execute(query)
         self.con.commit()
-        return res
+        return self.cursor.lastrowid
 
     def get_requests_from_user(self, user_id):
         query1 = 'SELECT * FROM Request WHERE user_id = {}'.format(
@@ -76,9 +76,14 @@ class DBConnect:
         return res
 
     def update_status_offer(self, status, offer_id):
-        query = "UPDATE Offer SET status=(status) WHERE offer_id=(id)".format(
-            status, offer_id)
-        res = self.cursor.execute(query)
+        query = """UPDATE Offer SET status = ? WHERE offer_id = ?"""
+        res = self.cursor.execute(query, (status, offer_id))
+        self.con.commit()
+        return res
+
+    def update_status_request(self, status, request_id):
+        query = """UPDATE Request SET status = ? WHERE request_id = ?"""
+        res = self.cursor.execute(query, (status, request_id))
         self.con.commit()
         return res
 
@@ -120,6 +125,13 @@ class DBConnect:
         query1 = 'SELECT * FROM Offer WHERE offer_id = {}'.format(
             offer_id)
         res = self.cursor.execute(query1).fetchone()
+        return res
+
+    def add_contract(self, offer_id, request_id, details, date_emitted, price, distance):
+        query = 'INSERT INTO Offer_Request (offer_id, request_id, details, date_emitted, price, distance) VALUES ("{}", "{}", "{}", "{}", "{}", "{}")'.format(
+            offer_id, request_id, details, date_emitted, price, distance)
+        res = self.cursor.execute(query)
+        self.con.commit()
         return res
 
     def __del__(self):
