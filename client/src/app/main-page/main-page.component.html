@@ -78,8 +78,12 @@
                         </select>
                     </div>
                     <div class="row mb-3 px-4">
-                        <input type="text" class="form-control" name="leaving_place" [(ngModel)]="this.leaving_place"
-                            placeholder="Leaving place">
+                        <select class="form-control" class="form-control" name="leaving_place"
+                            [(ngModel)]="this.leaving_place">
+                            <option selected value="">Leaving place</option>
+                            <option [value]="city" *ngFor="let city of city_selector">{{ city }}
+                            </option>
+                        </select>
                     </div>
                     <div class="input-group mb-3 px-2">
                         <button class="btn btn-secondary" type="button">
@@ -107,8 +111,12 @@
                         </div>
                     </div>
                     <div class="row mb-3 px-4">
-                        <input type="text" class="form-control" name="leaving_place" [(ngModel)]="this.arriving_place"
-                            placeholder="Arriving place">
+                        <select class="form-control" class="form-control" name="leaving_place"
+                            [(ngModel)]="this.arriving_place">
+                            <option selected value="">Arriving place</option>
+                            <option [value]="city" *ngFor="let city of city_selector">{{ city }}
+                            </option>
+                        </select>
                     </div>
                     <div class="input-group mb-3 px-2">
                         <button class="btn btn-secondary" type="button">
@@ -145,8 +153,12 @@
                     </div>
                     <div *ngIf="isClient()">
                         <div class="row mb-3 px-4">
-                            <input type="text" class="form-control" id="goods_type" name="goods_type"
-                                [(ngModel)]="this.goods_type" placeholder="Goods type">
+                            <select class="form-control" id="goods_type" name="goods_type"
+                                [(ngModel)]="this.goods_type">
+                                <option selected value="">Goods type</option>
+                                <option [value]="type" *ngFor="let type of goods_type_list">{{ type }}
+                                </option>
+                            </select>
                         </div>
                         <div class="row mb-3 px-4">
                             <input type="text" class="form-control" id="goods_volume" name="goods_volume"

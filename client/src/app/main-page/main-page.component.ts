@@ -34,6 +34,14 @@ export class MainPageComponent implements OnInit {
   public goods_volume: string = "";
   public budget: string = "";
   public user_requests: any = [];
+  public goods_type_list = ['furniture', 'animals', 'food', 'medical equipment', 'cars'];
+  public city_selector = ['Bucuresti',
+    'Constanta',
+    'Brasov',
+    'Cluj',
+    'Iasi',
+    'Focsani',
+    'Timisoara'];
 
   constructor(public auth: BackendApiService, private parserFormatter: NgbDateParserFormatter) { }
 
