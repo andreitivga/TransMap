@@ -39,9 +39,12 @@
         </li>
     </ul>
 </div>
-<div *ngIf="this.home" class="admin">
-    <h1>ADMINISTATION PAGE</h1>
-    <h3>Welcome back, {{ this.currentUserName }} !</h3>
+<div *ngIf="this.home">
+    <div class="admin">
+        <h1>ADMINISTATION PAGE</h1>
+        <h3>Welcome back, {{ this.currentUserName }} !</h3>
+    </div>
+    <img src="../../assets/admin-pic.png" class="admin-pic" />
 </div>
 <div class="make-center" *ngIf="this.addGoodTypeButton">
     <h1 class="elem-title">MANAGE GOODS TYPE</h1>

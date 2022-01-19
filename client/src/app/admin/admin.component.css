@@ -1,9 +1,3 @@
-/* .table{
-    position: absolute;
-    left: 350px;
-    border-right: 100px;
-    top:20%;
-} */
 .make-center{
     top: 20%;
     left: 50%;
@@ -27,4 +21,11 @@
     width: 1000px;
     align-content: center;
     border: 7px solid #1A76D2;
+}
+
+.admin-pic{
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    height: 450px;
 }
