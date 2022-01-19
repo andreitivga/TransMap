@@ -53,10 +53,12 @@ export class LoginComponent implements OnInit {
       this.emptyCredentials = false;
     }
     this.auth.login(email, password).subscribe(res => {
-      this.router.navigateByUrl('home');
+
       localStorage.setItem('user_id', res['user']['id']);
       localStorage.setItem('user_fname', res['user']['first_name']);
       localStorage.setItem('user_type', res['user']['user_type']);
+      if (res['user']['user_type'] == 'admin') this.router.navigateByUrl('admin');
+      else this.router.navigateByUrl('home');
     }, error => this.wrongCredentials = true);
   }
 

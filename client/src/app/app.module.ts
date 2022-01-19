@@ -15,13 +15,15 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapComponentComponent } from './map-component/map-component.component';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     MainPageComponent,
-    MapComponentComponent
+    MapComponentComponent,
+    AdminComponent
   ],
   imports: [
     CommonModule,

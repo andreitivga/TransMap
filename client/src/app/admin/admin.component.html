@@ -1,0 +1,114 @@
+<div class="d-flex flex-column flex-shrink-0 bg-light vh-100" style="width: 250px;position:absolute;">
+    <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+        <li>
+            <div class="nav-link py-3 active flex-column border-bottom justify-content-center">
+                <div class="user-menu">
+                    <mat-icon class="user-photo align-center">account_circle</mat-icon>
+                    <h3>{{ this.currentUserName}}</h3>
+                    <small> {{ this.curentUserType }}</small>
+                </div>
+
+            </div>
+        </li>
+        <li><a class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.homeOpen()">
+                <div class="d-flex justify-content-around">
+                    <mat-icon>home</mat-icon>
+                    <h3 class="px-4">Home</h3>
+                </div>
+            </a>
+        </li>
+        <li><a class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.goodsOpen()">
+                <div class="d-flex justify-content-around">
+                    <mat-icon>fastfood</mat-icon>
+                    <h3 class="px-4">Goods Type</h3>
+                </div>
+            </a>
+        </li>
+        <li><a class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.contractOpen()">
+                <div class="d-flex justify-content-around">
+                    <mat-icon>settings</mat-icon>
+                    <h3 class="px-4">Manage Contracts</h3>
+                </div>
+            </a>
+        </li>
+        <li>
+            <div class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.auth.logout()">
+                <mat-icon>exit_to_app</mat-icon>
+                <h3 class="px-4">Logout</h3>
+            </div>
+        </li>
+    </ul>
+</div>
+<div *ngIf="this.home" class="admin">
+    <h1>ADMINISTATION PAGE</h1>
+    <h3>Welcome back, {{ this.currentUserName }} !</h3>
+</div>
+<div class="make-center" *ngIf="this.addGoodTypeButton">
+    <h1 class="elem-title">MANAGE GOODS TYPE</h1>
+    <p>TODO: Show table with goods type. ADD NEW GOOD TYPE.</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@twitter</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="make-center" *ngIf="this.manageContractsButton">
+    <h1 class="elem-title">MANAGE CONTRACTS</h1>
+    <p>TODO: Show table with contract info</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@twitter</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
