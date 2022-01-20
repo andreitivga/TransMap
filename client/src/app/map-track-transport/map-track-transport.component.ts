@@ -116,7 +116,7 @@ export class MapTrackTransportComponent implements OnInit {
     this.view.graphics.add(graphic);
   }
 
-  getRoute() {
+  async getRoute() {
     const routeParams = new RouteParameters({
       stops: new FeatureSet({
         features: this.view.graphics.toArray()
@@ -126,8 +126,9 @@ export class MapTrackTransportComponent implements OnInit {
     });
 
     route.solve(this.routeUrl, routeParams).then((res:any) => {
-      console.log(res);
-      //this.view.graphics.add(res.route);
+      console.log(res.routeResults[0].route);
+      console.log(res.routeResults[0].directions);
+      this.view.graphics.add(res.routeResults[0].route);
       }).catch((error) => {
         console.log(error);
     })
