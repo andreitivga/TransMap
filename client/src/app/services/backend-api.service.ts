@@ -71,4 +71,16 @@ export class BackendApiService {
     return this.http.post<any>(backendPath + 'contract/', { client_id: client_id, offer_id: offer_id, user_type: user_type })
   }
 
+  getRecommendationClient(request_id: string, user_type: string | null) {
+    return this.http.post<any>(backendPath + 'rcmd/', { request_id: request_id, user_type: user_type })
+  }
+
+  getRecommendationCarrier(offer_id: string, user_type: string | null) {
+    return this.http.post<any>(backendPath + 'rcmd/', { offer_id: offer_id, user_type: user_type })
+  }
+
+  getAvailableForRecommandation(user_type: string | null, user_id: string | null) {
+    return this.http.get<any>(backendPath + 'list/' + user_type + '/' + user_id + '/')
+  }
+
 }

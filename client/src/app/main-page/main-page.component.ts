@@ -3,7 +3,8 @@ import { BackendApiService } from '../services/backend-api.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-main-page',
@@ -34,6 +35,9 @@ export class MainPageComponent implements OnInit {
   public goods_volume: string = "";
   public budget: string = "";
   public user_requests: any = [];
+  public availableList: any = [];
+  public selected_available: string = "";
+  public list_rcmd: any = [];
   public goods_type_list = ['furniture', 'animals', 'food', 'medical equipment', 'cars'];
   public city_selector = ['Bucuresti',
     'Constanta',
@@ -59,6 +63,21 @@ export class MainPageComponent implements OnInit {
   manageModal() {
     if (this.isClient()) this.auth.getRequestsfromUser(this.currentUserId).subscribe((res) => { this.user_requests = res; console.log(this.user_requests); });
     else { this.auth.getOffersfromUser(this.currentUserId).subscribe((res) => { this.user_requests = res; console.log(this.user_requests); }); }
+  }
+
+  getAvailableRcmd() {
+    this.auth.getAvailableForRecommandation(this.curentUserType, this.currentUserId).subscribe((res) => {
+      this.availableList = res;
+    })
+  }
+
+  getRecommendations() {
+    if (this.selected_available != "") {
+      if (this.curentUserType == 'carrier') this.auth.getRecommendationCarrier(this.selected_available, this.curentUserType).subscribe((res) => this.list_rcmd = res);
+      else {
+        this.auth.getRecommendationClient(this.selected_available, this.curentUserType).subscribe((res) => this.list_rcmd = res);
+      }
+    }
   }
 
   clearFileds() {

@@ -46,6 +46,13 @@
                 </div>
             </li>
             <li>
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" data-bs-toggle="modal"
+                    data-bs-target="#rcmdModal" (click)="this.getAvailableRcmd()">
+                    <mat-icon>settings_input_antenna</mat-icon>
+                    <h3 class="px-4">Recommendations</h3>
+                </div>
+            </li>
+            <li>
                 <div class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.auth.logout()">
                     <mat-icon>exit_to_app</mat-icon>
                     <h3 class="px-4">Logout</h3>
@@ -267,12 +274,6 @@
                                     <ng-template #detailsText>
                                         <p *ngFor="let d of item['details'] | keyvalue "> {{d.key}} {{ d.value}} <br>
                                         </p>
-                                        <!-- Budget: {{item['details']['budget']}} <br> Goods Type:
-                                        {{item['details']['goods_type']}} <br> Goods Volume:
-                                        {{item['details']['goods_volume']}}
-                                        <br> Goods Weight: {{item['details']['goods_weight']}} <br> Max Arriving Date:
-                                        {{item['details']['max_arriving_date']}} <br> Max Leaving Date:
-                                        {{item['details']['max_leaving_date']}} <br> Notes: {{item['details']['notes']}} -->
                                     </ng-template>
                                     <mat-icon class="cursor-pointer" placement="top" [ngbPopover]="detailsText"> launch
                                     </mat-icon>
@@ -310,6 +311,53 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="rcmdModal" tabindex="-1" role="dialog" aria-labelledby="rcmdModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="rcmdModalTitle">Recommendations for your needs</h2>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body px-4">
+                <h3>{{ this.isCarrier() ? "Select from your current available offers:" :"Select from your current
+                    available
+                    Requests:"}}</h3>
+                <select class="form-control" class="form-control" name="selected_available"
+                    [(ngModel)]="this.selected_available" (change)="this.getRecommendations()">
+                    <option selected value="">{{ this.isCarrier() ? "Offer NO" :"Request NO"}}</option>
+                    <option [value]="option" *ngFor="let option of this.availableList">{{ option }}
+                    </option>
+                </select>
+                <div *ngIf="this.selected_available listrcmd">
+                    <mat-list>
+                        <div *ngFor="let rcmd of this.list_rcmd">
+                            <mat-list-item style="color:black">NO : <b> #{{ rcmd['id'] }}</b></mat-list-item>
+                            <div class="d-flex justify-content-start flex-row">
+                                <ng-template #detailsRCMD>
+                                    <p *ngFor="let d of rcmd |keyvalue"> {{d.key}} {{ d.value}} <br>
+                                    </p>
+                                </ng-template>
+                                <p>More Info here </p>
+                                <mat-icon class="cursor-pointer" placement="right" [ngbPopover]="detailsRCMD"> launch
+                                </mat-icon>
+                            </div>
+                            <mat-divider style="background-color:black"></mat-divider>
+                        </div>
+                        <h5 *ngIf="this.list_rcmd.length==0" style="color: red;">Not available for your dates and
+                            budget!</h5>
+                    </mat-list>
                 </div>
             </div>
             <div class="modal-footer">
