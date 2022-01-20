@@ -377,5 +377,85 @@ def postContract():
         return Response(status=400)
 
 
+@app.route('/rcmd/', methods=['POST'])
+def getRecommendation():
+    rcmd = []
+    user_type = request.json["user_type"]
+    try:
+        if user_type == 'carrier':
+            # get offer  then search request search for dates and budget
+            id = request.json["offer_id"]
+            offer_detail = db_conn.get_offers_from_user_by_id(id)
+            city1 = offer_detail[5]
+            city2 = offer_detail[7]
+            date1 = datetime.strptime(offer_detail[4], '%Y-%M-%d')
+            date2 = datetime.strptime(offer_detail[6], '%Y-%M-%d')
+            km_full = offer_detail[9]
+            distance = round(great_circle(
+                cityMapping[city1], cityMapping[city2]).km, 2)
+            budget = round(km_full*distance, 2)
+            requests_accepted = db_conn.get_recmd_requests(city1, city2)
+            for r in requests_accepted:
+                (request_id, leaving_date, max_leaving_date,
+                 arriving_date, max_arriving_date, budgetr) = r
+                date_time_obj1 = datetime.strptime(leaving_date, '%Y-%M-%d')
+                date_time_obj1max = datetime.strptime(
+                    max_leaving_date, '%Y-%M-%d')
+                date_time_obj2 = datetime.strptime(arriving_date, '%Y-%M-%d')
+                date_time_obj2max = datetime.strptime(
+                    max_arriving_date, '%Y-%M-%d')
+                if date_time_obj1 <= date1 <= date_time_obj1max and date_time_obj2 <= date2 <= date_time_obj2max and budget > budgetr:
+                    rcmd.append({
+                        'id': request_id,
+                        'Leaving date': leaving_date,
+                        'Max leaving date': max_leaving_date,
+                        'Arriving date': arriving_date,
+                        'Max arriving date': max_arriving_date,
+                        'Budget': budgetr
+                    })
+        else:
+            id = request.json["request_id"]
+            request_detail = db_conn.get_requests_from_user_by_id(id)
+            city1 = request_detail[3]
+            city2 = request_detail[6]
+            date1 = request_detail[4]
+            date2 = request_detail[7]
+            budget = request_detail[12]
+            distance = round(great_circle(
+                cityMapping[city1], cityMapping[city2]).km, 2)
+            offers_accepted = db_conn.get_recmd_offers(
+                city1, city2, date1, date2)
+            for r in offers_accepted:
+                (offer_id, leaving_date,  arriving_date, price_km_full) = r
+                if budget > price_km_full * distance:
+                    rcmd.append({
+                        'id': offer_id,
+                        'Leaving date': leaving_date,
+                        'Arriving date': arriving_date,
+                        'Budget': price_km_full * distance
+                    })
+        return jsonify(rcmd), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
+@app.route('/list/<string:user_type>/<string:user_id>/', methods=['GET'])
+def fetchAvailableOffersByUser(user_type, user_id):
+    list_available_user = []
+    try:
+        if user_type == 'carrier':
+            res = db_conn.get_available_offers_user(user_id)
+            for r in res:
+                list_available_user.append(r[0])
+        else:
+            res = db_conn.get_available_requests_user(user_id)
+            for r in res:
+                list_available_user.append(r[0])
+        return jsonify(list_available_user), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -110,6 +110,16 @@ class DBConnect:
         res = self.cursor.execute(query1).fetchall()
         return res
 
+    def get_available_offers_user(self, user_id):
+        query1 = 'SELECT offer_id from Offer WHERE (status=? AND carrier_id=?)'
+        res = self.cursor.execute(query1, ("available", user_id)).fetchall()
+        return res
+
+    def get_available_requests_user(self, user_id):
+        query1 = 'SELECT request_id from Request WHERE (status=? AND user_id=? )'
+        res = self.cursor.execute(query1, ("available", user_id)).fetchall()
+        return res
+
     def get_available_offers(self):
         query1 = 'SELECT * from Offer WHERE status="available"'
         res = self.cursor.execute(query1).fetchall()
@@ -119,6 +129,18 @@ class DBConnect:
         query1 = 'SELECT * FROM Request WHERE request_id = {}'.format(
             request_id)
         res = self.cursor.execute(query1).fetchone()
+        return res
+
+    def get_recmd_requests(self, city1, city2):
+        query1 = """SELECT request_id, leaving_date, max_leaving_date, arriving_date, max_arriving_date, budget  FROM Request WHERE (leaving_place = ?  AND arriving_place = ? AND status=?)"""
+        res = self.cursor.execute(
+            query1, (city1, city2, "available")).fetchall()
+        return res
+
+    def get_recmd_offers(self, city1, city2, date1, date2):
+        query1 = """SELECT offer_id, leaving_date,  arriving_date, price_km_full  FROM Offer WHERE (leaving_place = ?  AND arriving_place = ? AND status=? AND leaving_date= ? AND  arriving_date=?)"""
+        res = self.cursor.execute(
+            query1, (city1, city2, "available", date1, date2)).fetchall()
         return res
 
     def get_offers_from_user_by_id(self, offer_id):
