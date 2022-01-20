@@ -18,13 +18,15 @@ import { MapComponentComponent } from './map-component/map-component.component';
 import { AdminComponent } from './admin/admin.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MapTrackTransportComponent } from './map-track-transport/map-track-transport.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     MainPageComponent,
     MapComponentComponent,
-    AdminComponent
+    AdminComponent,
+    MapTrackTransportComponent
   ],
   imports: [
     CommonModule,

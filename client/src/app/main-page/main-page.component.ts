@@ -47,6 +47,8 @@ export class MainPageComponent implements OnInit {
     'Focsani',
     'Timisoara'];
 
+  public showTrackMap: boolean = false;
+
   constructor(public auth: BackendApiService, private parserFormatter: NgbDateParserFormatter) { }
 
   ngOnInit(): void {
@@ -150,5 +152,16 @@ export class MainPageComponent implements OnInit {
 
   notEmptyJson(obj: any) {
     return Object.keys(obj).length;
+  }
+
+  clickHome() {
+    window.location.reload();
+    this.showTrackMap = false;
+    console.log("home: ", this.showTrackMap);
+  }
+
+  clickTrackTransport() {
+    this.showTrackMap = true;
+    console.log("track: ", this.showTrackMap);
   }
 }
