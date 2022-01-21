@@ -20,7 +20,8 @@ export class MapTrackTransportComponent implements OnInit {
 
   public currentUserId!: string | null;
   private data: any = [];
-  private curentUserType!: string | null;
+  private currentUserType!: string | null;
+  private startStopCities: any = [];
   private map = new ArcGISMap({ basemap: "arcgis-navigation" });
   private view = new MapView({
     map: this.map,
@@ -79,7 +80,7 @@ export class MapTrackTransportComponent implements OnInit {
     console.log("TRACK MAP");
     esriConfig.apiKey = "AAPKae40b934261e4ec6b79d2622e2b5b049kIV7ihnilaRJHxO1UFOXu9yBHyeMyAm4TK0cKUmxkDfMndCJfMKANS7yOUChaPUF";
     this.currentUserId = localStorage.getItem('user_id');
-    this.curentUserType = localStorage.getItem('user_type');
+    this.currentUserType = localStorage.getItem('user_type');
     this.map = new ArcGISMap({
       basemap: "streets-vector"
     });
@@ -91,20 +92,8 @@ export class MapTrackTransportComponent implements OnInit {
       zoom: 6
     });
 
-    const point1 = new Point({
-      longitude: cityMapping.Bucuresti[0] + Math.random() / 50,
-      latitude: cityMapping.Bucuresti[1] + Math.random() / 50
-    });
+    this.fetchContracts(this.currentUserType);
 
-    const point2 = new Point({
-      longitude: cityMapping.Constanta[0] + Math.random() / 50,
-      latitude: cityMapping.Constanta[1] + Math.random() / 50
-    });
-
-    this.addGraphic(point1);
-    this.addGraphic(point2);
-
-    this.getRoute();
   }
 
   addGraphic(point : Point) {
@@ -126,12 +115,169 @@ export class MapTrackTransportComponent implements OnInit {
     });
 
     route.solve(this.routeUrl, routeParams).then((res:any) => {
-      console.log(res.routeResults[0].route);
-      console.log(res.routeResults[0].directions);
       this.view.graphics.add(res.routeResults[0].route);
+      console.log("array: ", this.view.graphics.toArray());
       }).catch((error) => {
         console.log(error);
     })
   }
 
+  fetchContracts(user_type: string | null) {
+    if (this.currentUserType == 'client') {
+      this.backServ.getRequestsfromUser(this.currentUserId).subscribe( (res:any) => {
+        res.forEach( (element:any) => {
+          if (Object.keys(element.contract).length !== 0) {
+            this.startStopCities.push([element.leaving_place, element.arriving_place]);
+          }
+        });
+        this.calculateRoutes(this.startStopCities);
+      });
+    }
+    else if (this.currentUserType == 'carrier') {
+      this.backServ.getOffersfromUser(this.currentUserId).subscribe( (res:any) => {
+        res.forEach( (element:any) => {
+          if (Object.keys(element.contract).length !== 0) {
+            this.startStopCities.push([element.leaving_place, element.arriving_place]);
+          }
+        });
+        console.log(this.startStopCities);
+        this.calculateRoutes(this.startStopCities);
+      });
+    }
+  }
+
+  async calculateRoutes(cities:any) {
+    cities.forEach( async (element:any) => {
+      let start = element[0];
+      let end = element[1];
+
+      let pointStart = new Point();
+      let pointEnd = new Point();
+
+      switch (start) {
+        case 'Bucuresti': {
+          const point = new Point({
+            longitude: cityMapping.Bucuresti[0] + Math.random() / 50,
+            latitude: cityMapping.Bucuresti[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Constanta': {
+          const point = new Point({
+            longitude: cityMapping.Constanta[0] + Math.random() / 50,
+            latitude: cityMapping.Constanta[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Brasov': {
+          const point = new Point({
+            longitude: cityMapping.Brasov[0] + Math.random() / 50,
+            latitude: cityMapping.Brasov[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Cluj': {
+          const point = new Point({
+            longitude: cityMapping.Cluj[0] + Math.random() / 50,
+            latitude: cityMapping.Cluj[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Iasi': {
+          const point = new Point({
+            longitude: cityMapping.Iasi[0] + Math.random() / 50,
+            latitude: cityMapping.Iasi[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Focsani': {
+          const point = new Point({
+            longitude: cityMapping.Focsani[0] + Math.random() / 50,
+            latitude: cityMapping.Focsani[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+        case 'Timisoara': {
+          const point = new Point({
+            longitude: cityMapping.Timisoara[0] + Math.random() / 50,
+            latitude: cityMapping.Timisoara[1] + Math.random() / 50
+          });
+          pointStart = point;
+          break;
+        }
+      }
+  
+      switch (end) {
+        case 'Bucuresti': {
+          const point = new Point({
+            longitude: cityMapping.Bucuresti[0] + Math.random() / 50,
+            latitude: cityMapping.Bucuresti[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Constanta': {
+          const point = new Point({
+            longitude: cityMapping.Constanta[0] + Math.random() / 50,
+            latitude: cityMapping.Constanta[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Brasov': {
+          const point = new Point({
+            longitude: cityMapping.Brasov[0] + Math.random() / 50,
+            latitude: cityMapping.Brasov[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Cluj': {
+          const point = new Point({
+            longitude: cityMapping.Cluj[0] + Math.random() / 50,
+            latitude: cityMapping.Cluj[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Iasi': {
+          const point = new Point({
+            longitude: cityMapping.Iasi[0] + Math.random() / 50,
+            latitude: cityMapping.Iasi[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Focsani': {
+          const point = new Point({
+            longitude: cityMapping.Focsani[0] + Math.random() / 50,
+            latitude: cityMapping.Focsani[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+        case 'Timisoara': {
+          const point = new Point({
+            longitude: cityMapping.Timisoara[0] + Math.random() / 50,
+            latitude: cityMapping.Timisoara[1] + Math.random() / 50
+          });
+          pointEnd = point;
+          break;
+        }
+      }
+      
+      this.addGraphic(pointStart);
+      this.addGraphic(pointEnd);
+      console.log("in fct", this.view.graphics.toArray());
+      await this.getRoute();
+    });
+  
+
+  }
 }
