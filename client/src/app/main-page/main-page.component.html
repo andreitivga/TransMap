@@ -11,7 +11,7 @@
 
                 </div>
             </li>
-            <li><a [routerLink]="['/home']" class="nav-link py-3 d-flex border-bottom cursor-pointer">
+            <li><a [routerLink]="['/home']" class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.clickHome()">
                     <div class="d-flex justify-content-around">
                         <mat-icon>home</mat-icon>
                         <h3 class="px-4">Home</h3>
@@ -33,7 +33,7 @@
                 </div>
             </li>
             <li>
-                <div class="nav-link py-3 d-flex border-bottom cursor-pointer">
+                <div class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.clickTrackTransport()">
                     <mat-icon> pin_drop</mat-icon>
                     <h3 class="px-4">Track transport</h3>
                 </div>
@@ -60,7 +60,15 @@
             </li>
         </ul>
     </div>
-    <app-map-component></app-map-component>
+
+    <div *ngIf="this.showTrackMap == true">
+        <app-map-track-transport></app-map-track-transport>
+    </div>
+
+    <div *ngIf="this.showTrackMap == false">
+        <app-map-component></app-map-component>
+    </div>
+
 </div>
 
 
