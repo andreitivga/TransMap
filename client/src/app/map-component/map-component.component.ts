@@ -34,7 +34,7 @@ export class MapComponentComponent implements OnInit {
   private availablePoints: any = [];
   private availableRequests: any = [];
   private acceptAvailable: any = {
-    title: "Accept this Request",
+    title: "Accept this",
     id: "accept-request",
     image: "../../assets/acceptRequest.png"
     ,

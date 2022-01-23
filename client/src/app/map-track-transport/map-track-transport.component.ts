@@ -22,6 +22,8 @@ export class MapTrackTransportComponent implements OnInit {
   private data: any = [];
   private currentUserType!: string | null;
   private startStopCities: any = [];
+  private routeInformations: any = [];
+  private contractInfo: any = [];
   private map = new ArcGISMap({ basemap: "arcgis-navigation" });
   private view = new MapView({
     map: this.map,
@@ -30,15 +32,6 @@ export class MapTrackTransportComponent implements OnInit {
     zoom: 12
   });
 
-  private graphicsLayer = new GraphicsLayer();
-  private availablePoints: any = [];
-  private availableRequests: any = [];
-  private acceptAvailable: any = {
-    title: "Accept this Request",
-    id: "accept-request",
-    image: "../../assets/acceptRequest.png"
-    ,
-  };
   private userIcon = {
     type: "text",
     color: "#7A003C",
@@ -57,21 +50,25 @@ export class MapTrackTransportComponent implements OnInit {
       family: "CalciteWebCoreIcons"
     }
   };
-  private popupTemplateRequests = {
-    title: "{Name}",
-    content: "Leaves from {city1} to {city2} from {date1} to {date3}. Accepts delay from {date2} to {date4}. \
-    Goods: {goods}. Weight:{weight}, Volume: {volume}. Budget: {price}  RON. Client notes: {cn}",
-    actions: [this.acceptAvailable]
-  };
-  private popupTemplateOffers = {
-    title: "{Name}",
-    content: "Leaves from {city1} to {city2} from {date1} to {date2}. Price/km empty: {price_empty} RON. \
-    Price/km full: {price_full} RON. Carrier notes: {cn}",
-    actions: [this.acceptAvailable]
-  };
 
   private routeUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
 
+  private endRoute: any = {
+    title: "End this",
+    id: "end-route",
+    image: "../../assets/acceptRequest.png"
+  };
+
+  private popupTemplateRouteClient = {
+    title: "{Name}",
+    content: "Ongoing from {city1} to {city2} from {date1} to {date2}. ",
+  };
+
+  private popupTemplateRouteCarrier = {
+    title: "{Name}",
+    content: "Ongoing from {city1} to {city2} from {date1} to {date2}. Finished? Press End this so we announce the client.",
+    actions: [this.endRoute]
+  };
 
   constructor(private backServ: BackendApiService) {
   }
@@ -93,8 +90,21 @@ export class MapTrackTransportComponent implements OnInit {
     });
 
     this.fetchContracts(this.currentUserType);
+    
+    this.view.popup.on("trigger-action", (event) => {
+      if (event.action.id === "end-route") {
+        let temp = this.view.popup.title.split('#')[2];
+        let temp2 = temp.split("|")[0];
+        this.endRouteFunction(temp2, this.view.popup.title.split('#')[3]);
+      }
+    });
 
   }
+
+  refresh() {
+    window.location.reload();
+  }
+
 
   addGraphic(point : Point) {
     const graphic = new Graphic({
@@ -103,20 +113,36 @@ export class MapTrackTransportComponent implements OnInit {
     });
 
     this.view.graphics.add(graphic);
+    return graphic;
   }
 
-  async getRoute() {
+  async getRoute(userType:any, routeInfo:any, contractInfo:any) {
+    let arr = this.view.graphics.toArray().slice(-2);
     const routeParams = new RouteParameters({
       stops: new FeatureSet({
-        features: this.view.graphics.toArray()
+        features: arr
       }),
       returnRoutes: true,
       returnDirections: true
     });
 
     route.solve(this.routeUrl, routeParams).then((res:any) => {
+      res.routeResults[0].route.attributes = {
+        Name: 'Contract #' + contractInfo["date emitted"] + " | Offer #" + contractInfo.offer_id + " | Request #" + contractInfo.request_id,
+        city1: routeInfo[0],
+        city2: routeInfo[1],
+        date1: routeInfo[2],
+        date2: routeInfo[3]
+      };
+
+      if (userType == 'carrier') {
+        res.routeResults[0].route.popupTemplate = this.popupTemplateRouteCarrier;
+      } else {
+        res.routeResults[0].route.popupTemplate = this.popupTemplateRouteClient;
+      }
+      
       this.view.graphics.add(res.routeResults[0].route);
-      console.log("array: ", this.view.graphics.toArray());
+    
       }).catch((error) => {
         console.log(error);
     })
@@ -126,28 +152,38 @@ export class MapTrackTransportComponent implements OnInit {
     if (this.currentUserType == 'client') {
       this.backServ.getRequestsfromUser(this.currentUserId).subscribe( (res:any) => {
         res.forEach( (element:any) => {
-          if (Object.keys(element.contract).length !== 0) {
+          if (Object.keys(element.contract).length !== 0 && element.status === 'confirmed') {
             this.startStopCities.push([element.leaving_place, element.arriving_place]);
+            this.routeInformations.push([element.leaving_place, element.arriving_place, element.leaving_date, element.arriving_date]);
+            this.contractInfo.push(element.contract);
           }
         });
-        this.calculateRoutes(this.startStopCities);
+        this.calculateRoutes(this.startStopCities, this.currentUserType, this.routeInformations, this.contractInfo);
       });
     }
     else if (this.currentUserType == 'carrier') {
       this.backServ.getOffersfromUser(this.currentUserId).subscribe( (res:any) => {
         res.forEach( (element:any) => {
-          if (Object.keys(element.contract).length !== 0) {
+          if (Object.keys(element.contract).length !== 0 && element.status === 'confirmed') {
             this.startStopCities.push([element.leaving_place, element.arriving_place]);
+            this.routeInformations.push([element.leaving_place, element.arriving_place, element.leaving_date, element.arriving_date]);
+            this.contractInfo.push(element.contract);
           }
         });
         console.log(this.startStopCities);
-        this.calculateRoutes(this.startStopCities);
+        
+        this.calculateRoutes(this.startStopCities, this.currentUserType, this.routeInformations, this.contractInfo);
+        
       });
     }
   }
 
-  async calculateRoutes(cities:any) {
-    cities.forEach( async (element:any) => {
+  async calculateRoutes(cities:any, currUserType: any, routeInfo: any, contractInfo: any) {
+
+    let graphicPointStart;
+    let graphicPointEnd;
+
+    cities.forEach( async (element:any, i:any) => {
       let start = element[0];
       let end = element[1];
 
@@ -271,13 +307,17 @@ export class MapTrackTransportComponent implements OnInit {
           break;
         }
       }
-      
-      this.addGraphic(pointStart);
-      this.addGraphic(pointEnd);
-      console.log("in fct", this.view.graphics.toArray());
-      await this.getRoute();
+  
+      graphicPointStart = this.addGraphic(pointStart);
+      graphicPointEnd = this.addGraphic(pointEnd);
+      await this.getRoute(currUserType, routeInfo[i], contractInfo[i]);
     });
   
 
+  }
+
+  endRouteFunction(offer_id:string, request_id:string) {
+    console.log("S-a apasat end route");
+    this.backServ.finalizeContract(offer_id, request_id).subscribe((res) => this.refresh());
   }
 }

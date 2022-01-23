@@ -8,6 +8,7 @@ from werkzeug.wrappers import response
 from query import DBConnect
 from geopy.distance import great_circle
 from datetime import datetime
+import time
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -101,9 +102,20 @@ def update_status_offer():
     try:
         db_conn.update_status_offer(status, offer_id)
         return Response(status=200)
-    except:
+    except Exception as e:
+        print(e)
         return Response(status=400)
 
+@app.route('/request', methods=['PUT'])
+def update_status_request():
+    status = request.json['status']
+    request_id = request.json['request_id']
+    try:
+        db_conn.update_status_request(status, request_id)
+        return Response(status=200)
+    except Exception as e:
+        print(e)
+        return Response(status=400)
 
 @app.route('/requests', methods=['POST'])
 def add_request():
@@ -453,6 +465,20 @@ def fetchAvailableOffersByUser(user_type, user_id):
             for r in res:
                 list_available_user.append(r[0])
         return jsonify(list_available_user), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+@app.route('/finalize_contract', methods = ["PUT"])
+def finalizeContract():
+    status = request.json['status']
+    request_id = request.json['request_id']
+    offer_id = request.json['offer_id']
+
+    try:
+        db_conn.update_status_offer(status, offer_id)
+        db_conn.update_status_request(status, request_id)
+        return Response(status=200)
     except Exception as e:
         print(e)
         return Response(status=400)

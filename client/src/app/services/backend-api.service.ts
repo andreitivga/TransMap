@@ -83,4 +83,8 @@ export class BackendApiService {
     return this.http.get<any>(backendPath + 'list/' + user_type + '/' + user_id + '/')
   }
 
+  finalizeContract(offer_id: string, request_id: string) {
+    return this.http.put<any>(backendPath + 'finalize_contract', {offer_id: offer_id, request_id: request_id, status: 'finalized'});
+  }
+
 }
