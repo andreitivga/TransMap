@@ -20,14 +20,14 @@
         <li><a class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.goodsOpen()">
                 <div class="d-flex justify-content-around">
                     <mat-icon>fastfood</mat-icon>
-                    <h3 class="px-4">Goods Type</h3>
+                    <h3 class="px-4">Show Users</h3>
                 </div>
             </a>
         </li>
         <li><a class="nav-link py-3 d-flex border-bottom cursor-pointer" (click)="this.contractOpen()">
                 <div class="d-flex justify-content-around">
                     <mat-icon>settings</mat-icon>
-                    <h3 class="px-4">Manage Contracts</h3>
+                    <h3 class="px-4">Show Contracts</h3>
                 </div>
             </a>
         </li>
@@ -47,71 +47,57 @@
     <img src="../../assets/admin-pic.png" class="admin-pic" />
 </div>
 <div class="make-center" *ngIf="this.addGoodTypeButton">
-    <h1 class="elem-title">MANAGE GOODS TYPE</h1>
-    <p>TODO: Show table with goods type. ADD NEW GOOD TYPE.</p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-        </tbody>
-    </table>
+    <h1 class="elem-title">Show Users</h1>
+        <div class="table-responsive justify-content-center">
+            <table class="table" *ngIf="this.users.length>0">
+                <thead class="thead-light btn-dark">
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">User Type</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Telephone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of this.users">
+                        <td>{{ item[1] }}</td>
+                        <td>{{ item[3] }}</td>
+                        <td>{{ item[4] }}</td>
+                        <td>{{ item[5] }}</td>
+                        <td>{{ item[6] }}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 </div>
 
 <div class="make-center" *ngIf="this.manageContractsButton">
-    <h1 class="elem-title">MANAGE CONTRACTS</h1>
-    <p>TODO: Show table with contract info</p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-            </tr>
-        </tbody>
-    </table>
+    <h1 class="elem-title">Show Contracts</h1>
+        <div class="table-responsive justify-content-center">
+            <table class="table" *ngIf="this.contracts.length>0">
+                <thead class="thead-light btn-dark">
+                    <tr>
+                        <th scope="col">Offer Id</th>
+                        <th scope="col">Request Id</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Date Emitted</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Distance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of this.contracts">
+                        <td>#{{ item[0] }}</td>
+                        <td>#{{ item[1] }}</td>
+                        <td>{{ item[2] }}</td>
+                        <td>{{ item[3] }}</td>
+                        <td>{{ item[4] }}</td>
+                        <td>{{ item[5] }}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+    </div>
 </div>

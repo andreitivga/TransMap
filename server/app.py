@@ -483,5 +483,24 @@ def finalizeContract():
         print(e)
         return Response(status=400)
 
+@app.route('/users', methods = ["GET"])
+def getUsers():
+    try:
+        res = db_conn.get_users()
+        return jsonify(res), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+@app.route('/contracts', methods = ["GET"])
+def getContracts():
+    try:
+        res = db_conn.get_contracts()
+        return jsonify(res), 200
+    except Exception as e:
+        print(e)
+        return Response(status=400)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -156,5 +156,15 @@ class DBConnect:
         self.con.commit()
         return res
 
+    def get_users(self):
+        query1 = 'SELECT * FROM Users'
+        res = self.cursor.execute(query1).fetchall()
+        return res
+
+    def get_contracts(self):
+        query1 = 'SELECT * FROM Offer_Request'
+        res = self.cursor.execute(query1).fetchall()
+        return res
+        
     def __del__(self):
         self.con.close()

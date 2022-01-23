@@ -12,6 +12,8 @@ export class AdminComponent implements OnInit {
   public curentUserType!: string | null;
   public addGoodTypeButton: boolean=false;
   public manageContractsButton: boolean=false;
+  public contracts: any = [];
+  public users: any = [];
   public home: boolean=true;
 
   constructor(public auth: BackendApiService) { }
@@ -27,11 +29,22 @@ export class AdminComponent implements OnInit {
     this.home=false;
     this.addGoodTypeButton=true;
     this.manageContractsButton=false;
+
+    this.auth.getAllUsers().subscribe((res:any) => {
+      console.log(res);
+      this.users = res;
+    });
   }
   contractOpen(){
     this.home=false;
     this.addGoodTypeButton=false;
     this.manageContractsButton=true;
+
+    this.auth.getAllContracts().subscribe((res:any) => {
+      console.log(res);
+      this.contracts = res;
+
+    });
   }
   homeOpen(){
     this.home=true;
