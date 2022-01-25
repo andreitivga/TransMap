@@ -1,6 +1,6 @@
 # TransMap
 
-TransMap is an app that provies an easy to use transport service. It allows 2 types of custumers: carrier (posts offers and manages the transport) and client (the one that needs transportation). Both user types can accept offers/requests via the map if it fits their needs. In addition, the app automates the contract making process between client-carrier. Moreover, TransMap allows interactive tracking of their transport.
+TransMap is an app that provies an easy to use transport service. It allows 2 types of custumers: carrier (posts offers and manages the transport) and client (the one that needs transportation). Both user types can accept offers/requests via the map if it fits their needs. In addition, the app automates the contract making process between client-carrier. Moreover, TransMap allows interactive tracking of our transport.
 
 
 ## Overview 
