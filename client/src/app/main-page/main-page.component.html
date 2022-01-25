@@ -360,6 +360,9 @@
                                 <p>More Info here </p>
                                 <mat-icon class="cursor-pointer" placement="right" [ngbPopover]="detailsRCMD"> launch
                                 </mat-icon>
+                                <button class="btn btn-danger" type="button" (click)="this.acceptAvailableFunction(rcmd['id'])">
+                                    {{ this.isCarrier() ? "Make Request" :"Make Offer"}}
+                                </button>
                             </div>
                             <mat-divider style="background-color:black"></mat-divider>
                         </div>

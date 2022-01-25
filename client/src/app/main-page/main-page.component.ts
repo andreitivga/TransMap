@@ -164,4 +164,14 @@ export class MainPageComponent implements OnInit {
     this.showTrackMap = true;
     console.log("track: ", this.showTrackMap);
   }
+
+  acceptAvailableFunction(id: any) {
+    console.log(id);
+    if (this.curentUserType == 'carrier') {
+      this.auth.acceptRequestPopup(this.currentUserId, id, 'carrier').subscribe((res) => this.refresh())
+    }
+    else {
+      this.auth.acceptOfferPopup(this.currentUserId, id, 'client').subscribe((res) => this.refresh())
+    }
+  }
 }
