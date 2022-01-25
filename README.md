@@ -1,8 +1,15 @@
-# proiect_isi
-Proiect ISI
+# TransMap
+
+TransMap is an app that provies an easy to use transport service. It allows 2 types of custumers: carrier (posts offers and manages the transport) and client (the one that needs transportation). Both user types can accept offers/requests via the map if it fits their needs. In addition, the app automates the contract making process between client-carrier. Moreover, TransMap allows interactive tracking of their transport.
 
 
-## Overview App
+## Overview 
+
+![](app_overview/carrierHome.PNG)
+
+
+**More APP ScreenShots --->** [here](https://github.com/andreitivga/TransMap/tree/master/app_overview)
+
 
 
 ## Technologies
@@ -19,12 +26,12 @@ Proiect ISI
 ## Usage & Installation
 
 ```bash
-  https://github.com/andreitivga/proiect_isi.git
-  cd proiect_isi/server
+  https://github.com/andreitivga/TransMap.git
+  cd TransMap/server
   pip install -r requirements.txt
   python app.py
   
-  cd ../proiect_isi/client
+  cd ../TransMap/client
   npm install
   npm start
 ```
